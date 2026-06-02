@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fluid Modular Type Scale — Font Size Scaler</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface-2: #242836;
+      --border: #2e3344;
+      --text: #e8eaef;
+      --text-muted: #8b92a8;
+      --accent: #6c8cff;
+      --accent-dim: #4a5f99;
+      --warn: #f0a030;
+      --danger: #f06060;
+      --ok: #4ecf8a;
+      --radius: 8px;
+      --mono: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    header h1 {
+      margin: 0 0 0.25rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+    }
+
+    header a { color: var(--accent); }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: calc(100vh - 72px);
+    }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    aside {
+      padding: 1rem;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+      overflow-y: auto;
+      max-height: calc(100vh - 72px);
+    }
+
+    main {
+      padding: 1rem 1.25rem 2rem;
+      overflow-y: auto;
+      max-height: calc(100vh - 72px);
+    }
+
+    .field { margin-bottom: 0.875rem; }
+
+    .field label {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      padding: 0.4rem 0.5rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-size: 0.8125rem;
+    }
+
+    .field input:focus, .field select:focus {
+      outline: 2px solid var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .section-title {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      margin: 1.25rem 0 0.625rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title:first-child { margin-top: 0; }
+
+    .preset-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .preset-btns button {
+      padding: 0.2rem 0.45rem;
+      font-size: 0.6875rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .preset-btns button:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+    }
+
+    .card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    th, td {
+      padding: 0.4rem 0.5rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    tr:hover td { background: var(--surface-2); }
+
+    .warn-row td { color: var(--warn); }
+    .danger-row td { color: var(--danger); }
+    .highlight-row td { background: rgba(108, 140, 255, 0.12); }
+
+    .badge {
+      display: inline-block;
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.625rem;
+      font-weight: 600;
+    }
+
+    .badge-warn { background: rgba(240, 160, 48, 0.2); color: var(--warn); }
+    .badge-danger { background: rgba(240, 96, 96, 0.2); color: var(--danger); }
+    .badge-ok { background: rgba(78, 207, 138, 0.15); color: var(--ok); }
+
+    .viewport-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .viewport-bar input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .viewport-bar output {
+      font-family: var(--mono);
+      font-size: 0.8125rem;
+      min-width: 4.5rem;
+      text-align: right;
+    }
+
+    .preview-block {
+      border-left: 3px solid var(--accent-dim);
+      padding: 0.5rem 0 0.5rem 0.75rem;
+      margin-bottom: 0.625rem;
+    }
+
+    .preview-meta {
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.15rem;
+    }
+
+    .preview-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .check-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .check-item {
+      background: var(--surface-2);
+      border-radius: 6px;
+      padding: 0.625rem 0.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .check-item strong {
+      display: block;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .tabs button {
+      padding: 0.35rem 0.75rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+
+    .tabs button.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .code-wrap { position: relative; }
+
+    pre {
+      margin: 0;
+      padding: 0.875rem;
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.6875rem;
+      line-height: 1.55;
+      max-height: 420px;
+      white-space: pre;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.6875rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    .compare-note {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .label-input {
+      width: 5rem;
+      padding: 0.15rem 0.3rem;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 3px;
+      color: var(--text-muted);
+      font-size: 0.6875rem;
+    }
+
+    .label-input:hover, .label-input:focus {
+      border-color: var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fluid Modular Type Scale</h1>
+    <p>
+      <code>pow()</code> ベースの流動タイポグラフィ設定ツール —
+      参照: <a href="https://coliss.com/articles/build-websites/operation/css/fluid-modular-type-scale.html" target="_blank" rel="noopener">coliss 記事</a>
+    </p>
+  </header>
+
+  <div class="layout">
+    <aside id="controls"></aside>
+    <main id="main"></main>
+  </div>
+
+  <script>
+    const RATIO_PRESETS = {
+      'Minor Second': 1.067,
+      'Major Second': 1.125,
+      'Minor Third': 1.2,
+      'Major Third': 1.25,
+      'Perfect Fourth': 1.333,
+      'Augmented Fourth': 1.414,
+      'Perfect Fifth': 1.5,
+      'Golden Ratio': 1.618,
+    };
+
+    const DEFAULTS = {
+      fontSizeMin: 16,
+      fontSizeMax: 20,
+      fontRatioMin: 1.2,
+      fontRatioMax: 1.333,
+      fontWidthMin: 320,
+      fontWidthMax: 1440,
+      remBase: 16,
+      variableUnit: '100vi',
+      levelMin: -2,
+      levelMax: 8,
+      targetBodyPx: 16,
+      previewViewport: 768,
+    };
+
+    const state = {
+      ...DEFAULTS,
+      labels: {},
+      cssTab: 'vanilla',
+    };
+
+    function getConfig() {
+      return {
+        fontSizeMin: state.fontSizeMin,
+        fontSizeMax: state.fontSizeMax,
+        fontRatioMin: state.fontRatioMin,
+        fontRatioMax: state.fontRatioMax,
+        fontWidthMin: state.fontWidthMin,
+        fontWidthMax: state.fontWidthMax,
+        remBase: state.remBase,
+        variableUnit: state.variableUnit,
+      };
+    }
+
+    function fluidMin(level, c) {
+      return c.fontSizeMin * Math.pow(c.fontRatioMin, level);
+    }
+
+    function fluidMax(level, c) {
+      return c.fontSizeMax * Math.pow(c.fontRatioMax, level);
+    }
+
+    function slope(level, c) {
+      return (fluidMax(level, c) - fluidMin(level, c)) / (c.fontWidthMax - c.fontWidthMin);
+    }
+
+    function sizeAtViewport(level, vw, c) {
+      const min = fluidMin(level, c);
+      const max = fluidMax(level, c);
+      const m = slope(level, c);
+      const preferred = min - m * c.fontWidthMin + m * vw;
+      return Math.max(min, Math.min(max, preferred));
+    }
+
+    function levelForSize(targetPx, isMin, c) {
+      const base = isMin ? c.fontSizeMin : c.fontSizeMax;
+      const ratio = isMin ? c.fontRatioMin : c.fontRatioMax;
+      if (targetPx <= 0 || base <= 0 || ratio <= 0 || ratio === 1) return null;
+      return Math.log(targetPx / base) / Math.log(ratio);
+    }
+
+    function linearSize(level, isMin, c, stepOverride) {
+      const base = isMin ? c.fontSizeMin : c.fontSizeMax;
+      const step = stepOverride ?? (fluidMin(1, c) - fluidMin(0, c));
+      return base + level * step;
+    }
+
+    function fmt(px, digits = 2) {
+      return Number(px.toFixed(digits));
+    }
+
+    function fmtPx(px) {
+      return `${fmt(px)}px`;
+    }
+
+    function fmtRatio(a, b) {
+      if (!b) return '—';
+      return fmt(a / b, 3) + '×';
+    }
+
+    function getLabel(level) {
+      return state.labels[level] ?? defaultLabel(level);
+    }
+
+    function defaultLabel(level) {
+      const map = {
+        '-2': 'caption', '-1': 'small', 0: 'body',
+        1: 'lead', 2: 'h4', 3: 'h3', 4: 'h2', 5: 'h1', 6: 'display', 7: 'hero', 8: 'mega',
+      };
+      return map[String(level)] ?? `level-${level}`;
+    }
+
+    function levelsRange() {
+      const arr = [];
+      for (let i = state.levelMin; i <= state.levelMax; i++) arr.push(i);
+      return arr;
+    }
+
+    function buildControls() {
+      const el = document.getElementById('controls');
+      el.innerHTML = `
+        <div class="section-title">基底フォントサイズ</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="fontSizeMin">SP (--font-size-min)</label>
+            <input type="number" id="fontSizeMin" value="${state.fontSizeMin}" min="8" max="48" step="0.5">
+          </div>
+          <div class="field">
+            <label for="fontSizeMax">PC (--font-size-max)</label>
+            <input type="number" id="fontSizeMax" value="${state.fontSizeMax}" min="8" max="72" step="0.5">
+          </div>
+        </div>
+
+        <div class="section-title">スケール比</div>
+        <div class="preset-btns" id="ratioMinPresets"></div>
+        <div class="field">
+          <label for="fontRatioMin">SP (--font-ratio-min)</label>
+          <input type="number" id="fontRatioMin" value="${state.fontRatioMin}" min="1.01" max="2" step="0.001">
+        </div>
+        <div class="preset-btns" id="ratioMaxPresets"></div>
+        <div class="field">
+          <label for="fontRatioMax">PC (--font-ratio-max)</label>
+          <input type="number" id="fontRatioMax" value="${state.fontRatioMax}" min="1.01" max="2" step="0.001">
+        </div>
+
+        <div class="section-title">ビューポート幅</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="fontWidthMin">最小 (--font-width-min)</label>
+            <input type="number" id="fontWidthMin" value="${state.fontWidthMin}" min="240" max="1200" step="1">
+          </div>
+          <div class="field">
+            <label for="fontWidthMax">最大 (--font-width-max)</label>
+            <input type="number" id="fontWidthMax" value="${state.fontWidthMax}" min="600" max="2560" step="1">
+          </div>
+        </div>
+
+        <div class="section-title">その他</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="remBase">rem 換算基準 (px)</label>
+            <input type="number" id="remBase" value="${state.remBase}" min="10" max="24" step="1">
+          </div>
+          <div class="field">
+            <label for="variableUnit">--variable-unit</label>
+            <select id="variableUnit">
+              <option value="100vi" ${state.variableUnit === '100vi' ? 'selected' : ''}>100vi (viewport)</option>
+              <option value="100cqi" ${state.variableUnit === '100cqi' ? 'selected' : ''}>100cqi (container)</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="levelMin">表示レベル min</label>
+            <input type="number" id="levelMin" value="${state.levelMin}" min="-6" max="10" step="1">
+          </div>
+          <div class="field">
+            <label for="levelMax">表示レベル max</label>
+            <input type="number" id="levelMax" value="${state.levelMax}" min="-6" max="12" step="1">
+          </div>
+        </div>
+        <div class="field">
+          <label for="targetBodyPx">実用チェック: 目標本文サイズ (px)</label>
+          <input type="number" id="targetBodyPx" value="${state.targetBodyPx}" min="10" max="24" step="0.5">
+        </div>
+      `;
+
+      ['ratioMinPresets', 'ratioMaxPresets'].forEach((id, idx) => {
+        const targetId = idx === 0 ? 'fontRatioMin' : 'fontRatioMax';
+        const container = document.getElementById(id);
+        Object.entries(RATIO_PRESETS).forEach(([name, val]) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = name;
+          btn.title = String(val);
+          btn.addEventListener('click', () => {
+            document.getElementById(targetId).value = val;
+            readControls();
+            render();
+          });
+          container.appendChild(btn);
+        });
+      });
+
+      el.querySelectorAll('input, select').forEach(input => {
+        input.addEventListener('input', () => { readControls(); render(); });
+        input.addEventListener('change', () => { readControls(); render(); });
+      });
+    }
+
+    function readControls() {
+      const num = id => parseFloat(document.getElementById(id).value);
+      const int = id => parseInt(document.getElementById(id).value, 10);
+      state.fontSizeMin = num('fontSizeMin');
+      state.fontSizeMax = num('fontSizeMax');
+      state.fontRatioMin = num('fontRatioMin');
+      state.fontRatioMax = num('fontRatioMax');
+      state.fontWidthMin = int('fontWidthMin');
+      state.fontWidthMax = int('fontWidthMax');
+      state.remBase = int('remBase');
+      state.variableUnit = document.getElementById('variableUnit').value;
+      state.levelMin = int('levelMin');
+      state.levelMax = int('levelMax');
+      state.targetBodyPx = num('targetBodyPx');
+      if (state.levelMin > state.levelMax) {
+        [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
+      }
+    }
+
+    function practicalCheck(c) {
+      const target = state.targetBodyPx;
+      const spLevel = levelForSize(target, true, c);
+      const pcLevel = levelForSize(target, false, c);
+
+      let closestLevel = null;
+      let closestDiff = Infinity;
+      for (let l = -6; l <= 10; l++) {
+        const diff = Math.abs(fluidMin(l, c) - target);
+        if (diff < closestDiff) {
+          closestDiff = diff;
+          closestLevel = l;
+        }
+      }
+
+      const candidates = [];
+      for (let l = 2; l <= 4; l++) {
+        const neededBase = target / Math.pow(c.fontRatioMin, l);
+        candidates.push({ level: l, base: fmt(neededBase, 2) });
+      }
+
+      return { spLevel, pcLevel, closestLevel, closestDiff, candidates, target };
+    }
+
+    function generateVanillaCSS(c) {
+      const rb = c.remBase;
+      const vu = c.variableUnit;
+      const levels = levelsRange();
+
+      let utilClasses = levels.map(l => {
+        const name = getLabel(l);
+        return `.text-${name} {\n  --font-level: ${l};\n}`;
+      }).join('\n\n');
+
+      return `/*
+ * Fluid Modular Type Scale
+ * Generated by Font Size Scaler
+ * https://coliss.com/articles/build-websites/operation/css/fluid-modular-type-scale.html
+ */
+
+:root {
+  --font-size-min: ${c.fontSizeMin};
+  --font-size-max: ${c.fontSizeMax};
+  --font-ratio-min: ${c.fontRatioMin};
+  --font-ratio-max: ${c.fontRatioMax};
+  --font-width-min: ${c.fontWidthMin};
+  --font-width-max: ${c.fontWidthMax};
+}
+
+:where(.fluid) {
+  --fluid-min: calc(
+    var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0))
+  );
+  --fluid-max: calc(
+    var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0))
+  );
+  --fluid-preferred: calc(
+    (var(--fluid-max) - var(--fluid-min)) /
+    (var(--font-width-max) - var(--font-width-min))
+  );
+  --fluid-type: clamp(
+    (var(--fluid-min) / ${rb}) * 1rem,
+    ((var(--fluid-min) / ${rb}) * 1rem) -
+    (((var(--fluid-preferred) * var(--font-width-min)) / ${rb}) * 1rem) +
+    (var(--fluid-preferred) * var(--variable-unit, ${vu})),
+    (var(--fluid-max) / ${rb}) * 1rem
+  );
+  font-size: var(--fluid-type);
+}
+
+${utilClasses}`;
+    }
+
+    function generateTailwindCSS(c) {
+      const rb = c.remBase;
+      const vu = c.variableUnit;
+      const levels = levelsRange();
+
+      const themeTokens = levels.map(l => {
+        const name = getLabel(l);
+        const min = fluidMin(l, c);
+        const max = fluidMax(l, c);
+        const m = slope(l, c);
+        const minRem = (min / rb).toFixed(4);
+        const maxRem = (max / rb).toFixed(4);
+        const intercept = ((min / rb) - (m * c.fontWidthMin / rb)).toFixed(4);
+        const clampVal = `clamp(${minRem}rem, ${intercept}rem + ${m.toFixed(6)}${vu}, ${maxRem}rem)`;
+        return `  --text-fluid-${name}: ${clampVal};`;
+      }).join('\n');
+
+      const fluidBlock = `:where(.fluid) {
+  --fluid-min: calc(var(--font-size-min) * pow(var(--font-ratio-min), var(--font-level, 0)));
+  --fluid-max: calc(var(--font-size-max) * pow(var(--font-ratio-max), var(--font-level, 0)));
+  --fluid-preferred: calc((var(--fluid-max) - var(--fluid-min)) / (var(--font-width-max) - var(--font-width-min)));
+  --fluid-type: clamp(
+    (var(--fluid-min) / ${rb}) * 1rem,
+    ((var(--fluid-min) / ${rb}) * 1rem) - (((var(--fluid-preferred) * var(--font-width-min)) / ${rb}) * 1rem) + (var(--fluid-preferred) * var(--variable-unit, ${vu})),
+    (var(--fluid-max) / ${rb}) * 1rem
+  );
+  font-size: var(--fluid-type);
+}`;
+
+      return `/* Tailwind CSS v4 — Fluid Modular Type Scale */
+@import "tailwindcss";
+
+@theme {
+  --font-size-min: ${c.fontSizeMin};
+  --font-size-max: ${c.fontSizeMax};
+  --font-ratio-min: ${c.fontRatioMin};
+  --font-ratio-max: ${c.fontRatioMax};
+  --font-width-min: ${c.fontWidthMin};
+  --font-width-max: ${c.fontWidthMax};
+
+${themeTokens}
+}
+
+${fluidBlock}
+
+/* Usage:
+ *   <p class="fluid text-fluid-body">...</p>  (precomputed clamp tokens)
+ *   <p class="fluid text-body">...</p>         (level utility + .fluid)
+ */
+${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
+    }
+
+    function renderScaleTable(c) {
+      const levels = levelsRange();
+      const check = practicalCheck(c);
+      const linearStepSp = fluidMin(1, c) - fluidMin(0, c);
+      const linearStepPc = fluidMax(1, c) - fluidMax(0, c);
+
+      let rows = '';
+      levels.forEach((level, i) => {
+        const sp = fluidMin(level, c);
+        const pc = fluidMax(level, c);
+        const atVw = sizeAtViewport(level, state.previewViewport, c);
+        const prevSp = i > 0 ? fluidMin(levels[i - 1], c) : null;
+        const jump = prevSp ? fmtRatio(sp, prevSp) : '—';
+
+        const linSp = linearSize(level, true, c, linearStepSp);
+        const linPc = linearSize(level, false, c, linearStepPc);
+
+        let rowClass = '';
+        let badge = '';
+        if (sp < 10) { rowClass = 'danger-row'; badge = '<span class="badge badge-danger">&lt;10px</span>'; }
+        else if (sp < 12) { rowClass = 'warn-row'; badge = '<span class="badge badge-warn">&lt;12px</span>'; }
+        if (level === check.closestLevel) {
+          rowClass += ' highlight-row';
+          badge += ' <span class="badge badge-ok">≈' + state.targetBodyPx + 'px</span>';
+        }
+
+        rows += `<tr class="${rowClass}">
+          <td>${level}</td>
+          <td><input class="label-input" data-level="${level}" value="${getLabel(level)}" title="用途ラベル"></td>
+          <td>${fmtPx(sp)}</td>
+          <td>${fmtPx(pc)}</td>
+          <td>${fmtPx(atVw)}</td>
+          <td>${jump}</td>
+          <td>${fmtPx(linSp)} / ${fmtPx(linPc)}</td>
+          <td>${badge}</td>
+        </tr>`;
+      });
+
+      return `<div class="card">
+        <h2>スケール表</h2>
+        <p class="compare-note">
+          <strong>pow()</strong>: SP = base × ratio<sup>level</sup> — レベル間ジャンプ率が一定（${fmtRatio(fluidMin(1,c), fluidMin(0,c))}）。
+          <strong>線形（参考）</strong>: base + step×level — ジャンプ率はレベルが上がるほど低下。
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>Lv</th><th>用途</th><th>SP min</th><th>PC max</th>
+              <th>${state.previewViewport}px</th><th>SP jump</th><th>線形 SP/PC</th><th></th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+    }
+
+    function renderPreview(c) {
+      const levels = levelsRange().filter(l => l >= state.levelMin && l <= Math.min(state.levelMax, 6));
+      const blocks = levels.map(level => {
+        const px = sizeAtViewport(level, state.previewViewport, c);
+        return `<div class="preview-block">
+          <div class="preview-meta">Lv ${level} · ${getLabel(level)} · ${fmtPx(px)} @ ${state.previewViewport}px</div>
+          <div class="preview-text" style="font-size: ${px}px">あいうえお The quick brown fox — ${getLabel(level)}</div>
+        </div>`;
+      }).join('');
+
+      return `<div class="card">
+        <h2>タイポグラフィプレビュー</h2>
+        <div class="viewport-bar">
+          <label for="previewViewport">ビューポート</label>
+          <input type="range" id="previewViewport" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${state.previewViewport}" step="1">
+          <output id="previewViewportOut">${state.previewViewport}px</output>
+        </div>
+        ${blocks}
+      </div>`;
+    }
+
+    function renderPractical(c) {
+      const check = practicalCheck(c);
+      const spStr = check.spLevel != null ? `Lv ${fmt(check.spLevel, 3)}（整数なら Lv ${Math.round(check.spLevel)}）` : '—';
+      const pcStr = check.pcLevel != null ? `Lv ${fmt(check.pcLevel, 3)}` : '—';
+
+      const candidateRows = check.candidates.map(({ level, base }) => {
+        const verify = fmt(base * Math.pow(c.fontRatioMin, level), 2);
+        return `<tr><td>Lv ${level}</td><td>--font-size-min ≈ ${base}px</td><td>${base} × ${c.fontRatioMin}^${level} = ${verify}px</td></tr>`;
+      }).join('');
+
+      const level0sp = fluidMin(0, c);
+      const note = level0sp === check.target
+        ? '現在 Lv0 = 目標サイズ。Lv0 より小さい字（caption 等）は負のレベルが必要。'
+        : `Lv0 = ${fmtPx(level0sp)}。目標 ${check.target}px は Lv ${fmt(check.spLevel, 2)} 付近。`;
+
+      return `<div class="card">
+        <h2>実用チェック</h2>
+        <p class="compare-note">${note}</p>
+        <div class="check-grid">
+          <div class="check-item">
+            <strong>SP で ${check.target}px になるレベル</strong>
+            ${spStr}
+          </div>
+          <div class="check-item">
+            <strong>PC で ${check.target}px になるレベル</strong>
+            ${pcStr}
+          </div>
+          <div class="check-item">
+            <strong>SP min が ${check.target}px に最も近い整数レベル</strong>
+            Lv ${check.closestLevel}（${fmtPx(fluidMin(check.closestLevel, c))}、差 ${fmt(check.closestDiff, 2)}px）
+          </div>
+          <div class="check-item">
+            <strong>Lv0 の SP サイズ</strong>
+            ${fmtPx(fluidMin(0, c))} — これより小さい字は Lv &lt; 0
+          </div>
+        </div>
+        <h3 style="margin-top:1rem">Lv 2〜4 で SP ${check.target}px を通る --font-size-min 候補</h3>
+        <table>
+          <thead><tr><th>レベル</th><th>必要な --font-size-min</th><th>検算</th></tr></thead>
+          <tbody>${candidateRows}</tbody>
+        </table>
+      </div>`;
+    }
+
+    function renderCSS(c) {
+      const vanilla = generateVanillaCSS(c);
+      const tailwind = generateTailwindCSS(c);
+      const active = state.cssTab;
+      const code = active === 'vanilla' ? vanilla : tailwind;
+
+      return `<div class="card">
+        <h2>CSS 出力</h2>
+        <div class="tabs">
+          <button type="button" class="${active === 'vanilla' ? 'active' : ''}" data-tab="vanilla">Vanilla CSS</button>
+          <button type="button" class="${active === 'tailwind' ? 'active' : ''}" data-tab="tailwind">Tailwind v4</button>
+        </div>
+        <div class="code-wrap">
+          <button type="button" class="copy-btn" data-copy>コピー</button>
+          <pre id="cssOutput">${escapeHtml(code)}</pre>
+        </div>
+      </div>`;
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function render() {
+      const c = getConfig();
+      const main = document.getElementById('main');
+      main.innerHTML =
+        renderScaleTable(c) +
+        renderPreview(c) +
+        renderPractical(c) +
+        renderCSS(c);
+
+      const vp = document.getElementById('previewViewport');
+      const vpOut = document.getElementById('previewViewportOut');
+      if (vp) {
+        vp.addEventListener('input', () => {
+          state.previewViewport = parseInt(vp.value, 10);
+          vpOut.textContent = state.previewViewport + 'px';
+          render();
+        });
+      }
+
+      main.querySelectorAll('.label-input').forEach(input => {
+        input.addEventListener('change', () => {
+          state.labels[parseInt(input.dataset.level, 10)] = input.value.trim() || defaultLabel(parseInt(input.dataset.level, 10));
+          render();
+        });
+      });
+
+      main.querySelectorAll('.tabs button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.cssTab = btn.dataset.tab;
+          render();
+        });
+      });
+
+      main.querySelector('[data-copy]')?.addEventListener('click', () => {
+        const text = state.cssTab === 'vanilla' ? generateVanillaCSS(c) : generateTailwindCSS(c);
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = main.querySelector('[data-copy]');
+          btn.textContent = 'コピー済';
+          setTimeout(() => { btn.textContent = 'コピー'; }, 1500);
+        });
+      });
+    }
+
+    buildControls();
+    render();
+  </script>
+</body>
+</html>
