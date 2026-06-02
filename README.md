@@ -9,7 +9,11 @@ https://mtbk4919naoki.github.io/font-size-scaler/
 ## 使い方
 
 ```bash
-# リポジトリ root で
+# 推奨: 簡易サーバー（Cursor プレビュー / file:// 制限を回避）
+./scripts/serve.sh
+# → http://localhost:8080
+
+# またはブラウザで直接
 open index.html
 ```
 
