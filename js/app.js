@@ -57,17 +57,19 @@
         practicalTitle: '実用チェック',
         practicalLv0Note: 'Lv0 (SP) = {size}。',
         practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'これより小さい字は Lv < 0',
-        cssTitle: 'CSS 出力', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
-        copy: 'コピー', copied: 'コピー済',
-        figmaTitle: 'Figma エクスポート',
-        figmaIntro: 'SP / PC 端の font-size を JSON で出力します。Figma Variables の Mobile / Desktop モード取り込み用（fluid clamp 自体は Figma 非対応）。',
-        figmaCopyJson: 'JSON をコピー',
-        figmaHowTo: '使い方',
-        figmaJsonCopied: 'JSON をコピーしました',
-        figmaModalTitle: 'Figma への取り込み方',
-        figmaModalClose: '閉じる',
-        figmaModalNote: '<strong>注意:</strong> Figma は CSS の <code>clamp()</code> による連続補間を再現できません。JSON の <code>fontSize.SP</code> / <code>fontSize.PC</code> を離散モード値として使い、<code>cssClamp</code> は開発向け参考情報です。',
-        figmaModalSteps: '<ol><li>「JSON をコピー」でクリップボードにコピーし、<code>typography.json</code> などとして保存</li><li>Figma で <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> プラグインを開く</li><li>JSON をインポート（プラグインの手順に従い、モード名 <code>SP</code> / <code>PC</code> を Mobile / Desktop 等に対応付け）</li><li>取り込んだ font-size Variables を Text Style にバインド、または Styles & Variables Exporter 等で相互運用</li><li>フォント family / weight は Figma 側で別途指定（JSON には含みません）</li></ol><p>専用プラグインや Tokens Studio を使う場合も、本 JSON の <code>styles</code> 配列を参照してください。</p>',
+        cssTitle: 'CSS / Figma 出力', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
+        cssFigmaVars: 'Variables Import', cssTokensStudio: 'Tokens Studio',
+        copy: 'コピー', copied: 'コピー済', btnDownload: 'ダウンロード', downloaded: '保存しました',
+        exportHowTo: '使い方',
+        exportModalClose: '閉じる',
+        figmaVarsIntro: 'DTCG 形式の font-size Variables 用 ZIP。<a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> プラグイン向け（fluid clamp は Figma 非対応）。',
+        figmaVarsModalTitle: 'Variables Import への取り込み',
+        figmaVarsModalNote: '<strong>注意:</strong> Figma は CSS の <code>clamp()</code> による連続補間を再現できません。SP / PC は離散値として取り込みます。<strong>Starter プラン</strong>は 1 コレクション 1 モード（Default）のみのため、ZIP は SP / PC を<strong>別コレクション</strong>として出力します。Professional 以上なら同一コレクションの 2 モード運用も可能です。',
+        figmaVarsModalSteps: '<ol><li><strong>Variables Import</strong> タブで「<strong>ダウンロード</strong>」→ <code>font-size-scaler-variables.zip</code></li><li>ZIP を展開（<code>manifest.json</code> / <code>sp.tokens.json</code> / <code>pc.tokens.json</code>）</li><li>Figma で <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> を開き、<code>manifest.json</code> を選択</li><li><code>Type Scale SP</code> / <code>Type Scale PC</code> の 2 コレクションが作成されます（Default モード）</li><li>Variables を Text Style の font-size にバインド。font family / weight は Figma 側で別途指定</li></ol><p>プレビュー・コピーは SP トークン JSON です。インポートには ZIP 内 3 ファイルが必要です。</p>',
+        tokensStudioIntro: 'Typography トークン + SP/PC テーマの JSON。<a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio</a> から Text Style としてエクスポート（Starter でもテーマ切替可）。',
+        tokensStudioModalTitle: 'Tokens Studio への取り込み',
+        tokensStudioModalNote: '<strong>注意:</strong> 出力は font-size 中心の Typography トークンです。font family は <code>Inter</code>、font weight は <code>Regular</code> のプレースホルダーです。Figma 側で書体を差し替えてください。fluid clamp は <code>description</code> に参考値として記載しています。',
+        tokensStudioModalSteps: '<ol><li><strong>Tokens Studio</strong> タブで JSON を「<strong>ダウンロード</strong>」または「<strong>コピー</strong>」（<code>font-size-scaler-tokens-studio.json</code>）</li><li>Figma で <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio for Figma</a> を開く</li><li>Settings（歯車）→ <strong>Load from file</strong> で JSON を読み込む</li><li>プラグイン上部のテーマ <strong>SP</strong> / <strong>PC</strong> で Token Set を切り替える</li><li>テキストを選択 → トークン（<code>text-body</code> 等）をクリックして適用（モバイル用フレーム＝SP、PC 用フレーム＝PC）</li><li>Text Style 化する場合: Styles &amp; Variables → <strong>Export to Figma</strong> → Typography（テーマごとに Export。同名スタイルは上書きされます）</li></ol><p><strong>SP / PC について:</strong> Figma 上に切替ボタンはありません。フレームごとにテーマとスタイルを使い分けてください。実装の <code>clamp()</code> は Vanilla CSS タブが正です。</p><p>Variables Import との併用: font-size Variables は Variables Import、Text Style は Tokens Studio。</p>',
         intLevel: '（整数なら Lv {n}）',
       },
       en: {
@@ -123,20 +125,47 @@
         practicalTitle: 'Practical check',
         practicalLv0Note: 'Lv0 (SP) = {size}.',
         practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'Smaller text uses Lv < 0',
-        cssTitle: 'CSS output', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
-        copy: 'Copy', copied: 'Copied',
-        figmaTitle: 'Figma export',
-        figmaIntro: 'Export SP / PC endpoint font sizes as JSON for Figma Variables (Mobile / Desktop modes). Fluid clamp is not representable in Figma.',
-        figmaCopyJson: 'Copy JSON',
-        figmaHowTo: 'How to use',
-        figmaJsonCopied: 'JSON copied',
-        figmaModalTitle: 'Import into Figma',
-        figmaModalClose: 'Close',
-        figmaModalNote: '<strong>Note:</strong> Figma cannot reproduce continuous <code>clamp()</code> interpolation. Use <code>fontSize.SP</code> / <code>fontSize.PC</code> as discrete mode values; <code>cssClamp</code> is for CSS dev handoff only.',
-        figmaModalSteps: '<ol><li>Click <strong>Copy JSON</strong>, save as e.g. <code>typography.json</code></li><li>In Figma, open the <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> plugin</li><li>Import the JSON and map modes <code>SP</code> / <code>PC</code> to Mobile / Desktop (per plugin instructions)</li><li>Bind imported font-size variables to Text Styles, or use tools like Styles & Variables Exporter for round-trips</li><li>Set font family / weight in Figma separately (not included in JSON)</li></ol><p>For Tokens Studio or a custom plugin, use the <code>styles</code> array as the source of truth.</p>',
+        cssTitle: 'CSS / Figma export', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
+        cssFigmaVars: 'Variables Import', cssTokensStudio: 'Tokens Studio',
+        copy: 'Copy', copied: 'Copied', btnDownload: 'Download', downloaded: 'Downloaded',
+        exportHowTo: 'How to use',
+        exportModalClose: 'Close',
+        figmaVarsIntro: 'DTCG font-size Variables as a ZIP for the <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> plugin. Fluid clamp is not representable in Figma.',
+        figmaVarsModalTitle: 'Import via Variables Import',
+        figmaVarsModalNote: '<strong>Note:</strong> Figma cannot reproduce continuous <code>clamp()</code> interpolation. SP / PC are discrete values. On the <strong>Starter plan</strong> (one mode per collection), the ZIP exports SP / PC as <strong>separate collections</strong>. On Professional+, you can also use a single collection with two modes.',
+        figmaVarsModalSteps: '<ol><li>On the <strong>Variables Import</strong> tab, click <strong>Download</strong> → <code>font-size-scaler-variables.zip</code></li><li>Extract the ZIP (<code>manifest.json</code>, <code>sp.tokens.json</code>, <code>pc.tokens.json</code>)</li><li>In Figma, open <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> and select <code>manifest.json</code></li><li>Collections <code>Type Scale SP</code> and <code>Type Scale PC</code> are created (Default mode each)</li><li>Bind variables to Text Style font-size. Set font family / weight in Figma separately</li></ol><p>Preview and Copy show the SP token JSON. Import requires all three ZIP files.</p>',
+        tokensStudioIntro: 'Typography tokens + SP/PC themes as JSON for <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio</a> → export as Text Styles (theme switching works on Starter).',
+        tokensStudioModalTitle: 'Import via Tokens Studio',
+        tokensStudioModalNote: '<strong>Note:</strong> Output is font-size–focused Typography tokens. <code>Inter</code> / <code>Regular</code> are placeholders—swap the typeface in Figma. Fluid clamp references are in each token\'s <code>description</code>.',
+        tokensStudioModalSteps: '<ol><li>On the <strong>Tokens Studio</strong> tab, <strong>Download</strong> or <strong>Copy</strong> <code>font-size-scaler-tokens-studio.json</code></li><li>In Figma, open <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio for Figma</a></li><li>Settings (gear) → <strong>Load from file</strong></li><li>Switch theme <strong>SP</strong> / <strong>PC</strong> at the top of the plugin</li><li>Select text → click a token (<code>text-body</code>, etc.) to apply (mobile frames = SP, desktop frames = PC)</li><li>For Text Styles: Styles &amp; Variables → <strong>Export to Figma</strong> → Typography (export per theme; same names overwrite)</li></ol><p><strong>SP / PC:</strong> There is no toggle in Figma—use themes and styles per frame. For production <code>clamp()</code>, use the Vanilla CSS tab.</p><p>Pair with Variables Import: variables there, Text Styles here.</p>',
         intLevel: '(integer ≈ Lv {n})',
       },
     };
+
+    const EXPORT_HELP = {
+      'figma-vars': {
+        title: 'figmaVarsModalTitle',
+        note: 'figmaVarsModalNote',
+        steps: 'figmaVarsModalSteps',
+      },
+      'tokens-studio': {
+        title: 'tokensStudioModalTitle',
+        note: 'tokensStudioModalNote',
+        steps: 'tokensStudioModalSteps',
+      },
+    };
+
+    function normalizeCssTab(tab) {
+      if (tab === 'figma') return 'figma-vars';
+      if (tab === 'vanilla' || tab === 'tailwind' || tab === 'figma-vars' || tab === 'tokens-studio') return tab;
+      return 'vanilla';
+    }
+
+    function exportIntroKey(tab) {
+      if (tab === 'figma-vars') return 'figmaVarsIntro';
+      if (tab === 'tokens-studio') return 'tokensStudioIntro';
+      return null;
+    }
 
     function t(key, vars = {}) {
       let s = (I18N[state.lang] || I18N.en)[key] ?? key;
@@ -156,6 +185,7 @@
       save: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13 14H3V2h7l1 1v1h2v10zM5 3v2h5V3H5zm0 9h6v2H5v-2z"/></svg>',
       share: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M6 9l4-2M6 7l4 2M3 6.5h2M11 9.5h2"/></svg>',
       copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 1h9v9H4V1zm1 1v7h7V2H5zm-2 3h1v9h9v1H3V4z"/></svg>',
+      download: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>',
       reset: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 0 1 9.3-4M13.5 8a5.5 5.5 0 0 1-9.3 4"/><path d="M11 2.5h2v2M5 13.5H3v-2"/></svg>',
       help: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M6.2 6.1a1.8 1.8 0 0 1 3.5.7c0 1.2-1.7 1.5-1.7 2.8M8 12.2h.01"/></svg>',
       figma: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5 16H8V9.3H5.5a2.7 2.7 0 1 0 0 5.4zM8 0H5.5A2.7 2.7 0 0 0 8 2.7V0zM8 8H10.5a2.7 2.7 0 1 0 0-5.4H8V8zm0 2.7V16h2.5A2.7 2.7 0 0 0 8 10.7z"/></svg>',
@@ -229,7 +259,7 @@
       });
       if (data.previewViewport != null) state.previewViewport = parseInt(data.previewViewport, 10);
       if (data.labels && typeof data.labels === 'object') state.labels = { ...data.labels };
-      if (data.cssTab) state.cssTab = data.cssTab;
+      if (data.cssTab) state.cssTab = normalizeCssTab(data.cssTab);
       if (data.lang) state.lang = data.lang;
       if (data.practicalTarget1 != null && data.practicalSpA == null) state.practicalSpA = parseFloat(data.practicalTarget1);
       if (data.practicalTarget2 != null && data.practicalPcA == null) state.practicalPcA = parseFloat(data.practicalTarget2);
@@ -585,7 +615,10 @@
       renderLangToggle();
       buildControls();
       render();
-      if (document.getElementById('figmaModal')?.classList.contains('is-open')) updateFigmaModalContent();
+      if (document.getElementById('exportHelpModal')?.classList.contains('is-open')) {
+        const tab = document.getElementById('exportHelpModal').dataset.helpTab;
+        if (tab) updateExportHelpModal(tab);
+      }
     }
 
     function refreshPresetButtons() {
@@ -810,119 +843,307 @@ ${fluidBlock}
 ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
     }
 
-    function generateFigmaJSON(c) {
-      const vw = state.previewViewport;
-      const styles = levelsRange().map(level => {
-        const label = getLabel(level);
-        return {
-          name: label,
-          level,
-          cssClass: cssClassName(level),
-          fontSize: {
-            SP: fmt(effectiveSpMin(level, c)),
-            PC: fmt(fluidMax(level, c)),
-          },
-          previewPx: fmt(sizeAtViewport(level, vw, c)),
-          cssClamp: cssClampLiteral(level, c).clamp,
-        };
-      });
+    function figmaTokenKey(label, level) {
+      const key = String(label).trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      return key || `lv-${level}`;
+    }
 
-      return JSON.stringify({
-        format: 'font-size-scaler-figma-v1',
-        meta: {
-          source: 'Font Size Scaler',
-          url: 'https://mtbk4919naoki.github.io/font-size-scaler/',
-          viewportMin: c.fontWidthMin,
-          viewportMax: c.fontWidthMax,
-          previewViewport: vw,
-          fontSizeFloor: c.fontSizeFloor,
-          fontSizeMin: c.fontSizeMin,
-          fontSizeMax: c.fontSizeMax,
-          fontRatioMin: c.fontRatioMin,
-          fontRatioMax: c.fontRatioMax,
-          remBase: c.remBase,
-          modes: ['SP', 'PC'],
-          note: 'SP/PC are discrete endpoint sizes. cssClamp is for CSS dev handoff; Figma cannot represent fluid interpolation.',
+    function buildFigmaModeTokens(c, mode) {
+      const group = {};
+      for (const level of levelsRange()) {
+        const label = getLabel(level);
+        const px = mode === 'SP' ? effectiveSpMin(level, c) : fluidMax(level, c);
+        const key = figmaTokenKey(label, level);
+        group[key] = {
+          $type: 'dimension',
+          $value: `${fmt(px)}px`,
+          $description: `${cssClassName(level)} · Lv ${level} · ${cssClampLiteral(level, c).clamp}`,
+          $extensions: { 'com.figma.scopes': ['FONT_SIZE'] },
+        };
+      }
+      return { 'Font Size': group };
+    }
+
+    function buildFigmaManifest() {
+      return {
+        name: 'Font Size Scaler',
+        collections: {
+          'Type Scale SP': {
+            modes: { Default: ['sp.tokens.json'] },
+          },
+          'Type Scale PC': {
+            modes: { Default: ['pc.tokens.json'] },
+          },
         },
-        styles,
+      };
+    }
+
+    function buildFigmaBundle(c) {
+      return {
+        manifest: JSON.stringify(buildFigmaManifest(), null, 2),
+        sp: JSON.stringify(buildFigmaModeTokens(c, 'SP'), null, 2),
+        pc: JSON.stringify(buildFigmaModeTokens(c, 'PC'), null, 2),
+      };
+    }
+
+    function generateFigmaJSON(c) {
+      return buildFigmaBundle(c).sp;
+    }
+
+    const TOKENS_STUDIO_SET_SP = 'Type Scale/SP';
+    const TOKENS_STUDIO_SET_PC = 'Type Scale/PC';
+
+    function buildTokensStudioTypographySet(c, mode) {
+      const set = {};
+      for (const level of levelsRange()) {
+        const px = mode === 'SP' ? effectiveSpMin(level, c) : fluidMax(level, c);
+        set[cssClassName(level)] = {
+          value: {
+            fontFamily: 'Inter',
+            fontWeight: 'Regular',
+            lineHeight: '150%',
+            letterSpacing: '0',
+            paragraphSpacing: '0',
+            paragraphIndent: '0',
+            textCase: 'none',
+            textDecoration: 'none',
+            fontSize: `${fmt(px)}px`,
+          },
+          type: 'typography',
+          description: `Lv ${level} · ${cssClampLiteral(level, c).clamp}`,
+        };
+      }
+      return set;
+    }
+
+    function generateTokensStudioJSON(c) {
+      return JSON.stringify({
+        [TOKENS_STUDIO_SET_SP]: buildTokensStudioTypographySet(c, 'SP'),
+        [TOKENS_STUDIO_SET_PC]: buildTokensStudioTypographySet(c, 'PC'),
+        $themes: [
+          {
+            id: 'sp',
+            name: 'SP',
+            selectedTokenSets: {
+              [TOKENS_STUDIO_SET_SP]: 'enabled',
+              [TOKENS_STUDIO_SET_PC]: 'disabled',
+            },
+          },
+          {
+            id: 'pc',
+            name: 'PC',
+            selectedTokenSets: {
+              [TOKENS_STUDIO_SET_SP]: 'disabled',
+              [TOKENS_STUDIO_SET_PC]: 'enabled',
+            },
+          },
+        ],
+        $metadata: {
+          tokenSetOrder: [TOKENS_STUDIO_SET_SP, TOKENS_STUDIO_SET_PC],
+        },
       }, null, 2);
     }
 
-    function showFigmaToast(msg) {
-      const el = document.getElementById('figmaToast');
-      if (!el) return;
-      el.textContent = msg;
-      setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 2000);
+    const CRC32_TABLE = (() => {
+      const table = new Uint32Array(256);
+      for (let i = 0; i < 256; i++) {
+        let c = i;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        table[i] = c >>> 0;
+      }
+      return table;
+    })();
+
+    function crc32(bytes) {
+      let crc = 0xFFFFFFFF;
+      for (let i = 0; i < bytes.length; i++) crc = CRC32_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+      return (crc ^ 0xFFFFFFFF) >>> 0;
     }
 
-    function updateFigmaModalContent() {
-      const modal = document.getElementById('figmaModal');
-      if (!modal) return;
-      modal.querySelector('#figmaModalTitle').textContent = t('figmaModalTitle');
-      modal.querySelector('#figmaModalNote').innerHTML = t('figmaModalNote');
-      modal.querySelector('#figmaModalSteps').innerHTML = t('figmaModalSteps');
-      modal.querySelector('[data-modal-close-btn]').textContent = t('figmaModalClose');
-      modal.querySelector('.modal-close').setAttribute('aria-label', t('figmaModalClose'));
+    function writeUint32LE(view, offset, value) {
+      view.setUint32(offset, value, true);
     }
 
-    function openFigmaModal() {
-      ensureFigmaModal();
-      updateFigmaModalContent();
-      const modal = document.getElementById('figmaModal');
+    function writeUint16LE(view, offset, value) {
+      view.setUint16(offset, value, true);
+    }
+
+    function createStoreZip(files) {
+      const enc = new TextEncoder();
+      const parts = [];
+      const central = [];
+      let offset = 0;
+
+      for (const { name, content } of files) {
+        const nameBytes = enc.encode(name);
+        const data = enc.encode(content);
+        const crc = crc32(data);
+        const local = new Uint8Array(30 + nameBytes.length + data.length);
+        const lv = new DataView(local.buffer);
+        writeUint32LE(lv, 0, 0x04034B50);
+        writeUint16LE(lv, 4, 20);
+        writeUint16LE(lv, 6, 0);
+        writeUint16LE(lv, 8, 0);
+        writeUint16LE(lv, 10, 0);
+        writeUint16LE(lv, 12, 0);
+        writeUint32LE(lv, 14, crc);
+        writeUint32LE(lv, 18, data.length);
+        writeUint32LE(lv, 22, data.length);
+        writeUint16LE(lv, 26, nameBytes.length);
+        writeUint16LE(lv, 28, 0);
+        local.set(nameBytes, 30);
+        local.set(data, 30 + nameBytes.length);
+        parts.push(local);
+
+        const cd = new Uint8Array(46 + nameBytes.length);
+        const cv = new DataView(cd.buffer);
+        writeUint32LE(cv, 0, 0x02014B50);
+        writeUint16LE(cv, 4, 20);
+        writeUint16LE(cv, 6, 20);
+        writeUint16LE(cv, 8, 0);
+        writeUint16LE(cv, 10, 0);
+        writeUint16LE(cv, 12, 0);
+        writeUint16LE(cv, 14, 0);
+        writeUint32LE(cv, 16, crc);
+        writeUint32LE(cv, 20, data.length);
+        writeUint32LE(cv, 24, data.length);
+        writeUint16LE(cv, 28, nameBytes.length);
+        writeUint16LE(cv, 30, 0);
+        writeUint16LE(cv, 32, 0);
+        writeUint16LE(cv, 34, 0);
+        writeUint16LE(cv, 36, 0);
+        writeUint32LE(cv, 38, 0);
+        writeUint32LE(cv, 42, offset);
+        cd.set(nameBytes, 46);
+        central.push(cd);
+        offset += local.length;
+      }
+
+      const centralSize = central.reduce((sum, part) => sum + part.length, 0);
+      const end = new Uint8Array(22);
+      const ev = new DataView(end.buffer);
+      writeUint32LE(ev, 0, 0x06054B50);
+      writeUint16LE(ev, 4, 0);
+      writeUint16LE(ev, 6, 0);
+      writeUint16LE(ev, 8, files.length);
+      writeUint16LE(ev, 10, files.length);
+      writeUint32LE(ev, 12, centralSize);
+      writeUint32LE(ev, 16, offset);
+      writeUint16LE(ev, 20, 0);
+
+      const total = offset + centralSize + end.length;
+      const zip = new Uint8Array(total);
+      let pos = 0;
+      for (const part of parts) { zip.set(part, pos); pos += part.length; }
+      for (const part of central) { zip.set(part, pos); pos += part.length; }
+      zip.set(end, pos);
+      return zip;
+    }
+
+    function exportCode(c) {
+      if (state.cssTab === 'tailwind') return generateTailwindCSS(c);
+      if (state.cssTab === 'figma-vars') return generateFigmaJSON(c);
+      if (state.cssTab === 'tokens-studio') return generateTokensStudioJSON(c);
+      return generateVanillaCSS(c);
+    }
+
+    function exportFilename() {
+      if (state.cssTab === 'tailwind') return 'fluid-modular-type-scale.tailwind.css';
+      if (state.cssTab === 'figma-vars') return 'font-size-scaler-variables.zip';
+      if (state.cssTab === 'tokens-studio') return 'font-size-scaler-tokens-studio.json';
+      return 'fluid-modular-type-scale.css';
+    }
+
+    function exportMimeType() {
+      if (state.cssTab === 'figma-vars') return 'application/zip';
+      if (state.cssTab === 'tokens-studio') return 'application/json;charset=utf-8';
+      return 'text/css;charset=utf-8';
+    }
+
+    function downloadExport() {
+      readControls();
+      const c = getConfig();
+      let blob;
+      if (state.cssTab === 'figma-vars') {
+        const bundle = buildFigmaBundle(c);
+        const zip = createStoreZip([
+          { name: 'manifest.json', content: bundle.manifest },
+          { name: 'sp.tokens.json', content: bundle.sp },
+          { name: 'pc.tokens.json', content: bundle.pc },
+        ]);
+        blob = new Blob([zip], { type: exportMimeType() });
+      } else {
+        blob = new Blob([exportCode(c)], { type: exportMimeType() });
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = exportFilename();
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function updateExportHelpModal(tab) {
+      const modal = document.getElementById('exportHelpModal');
+      const cfg = EXPORT_HELP[tab];
+      if (!modal || !cfg) return;
+      modal.querySelector('#exportHelpModalTitle').textContent = t(cfg.title);
+      modal.querySelector('#exportHelpModalNote').innerHTML = t(cfg.note);
+      modal.querySelector('#exportHelpModalSteps').innerHTML = t(cfg.steps);
+      modal.querySelector('[data-modal-close-btn]').textContent = t('exportModalClose');
+      modal.querySelector('.modal-close').setAttribute('aria-label', t('exportModalClose'));
+    }
+
+    function openExportHelpModal(tab) {
+      if (!EXPORT_HELP[tab]) return;
+      ensureExportHelpModal();
+      updateExportHelpModal(tab);
+      const modal = document.getElementById('exportHelpModal');
+      modal.dataset.helpTab = tab;
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('modal-open');
       modal.querySelector('.modal-close').focus();
     }
 
-    function closeFigmaModal() {
-      const modal = document.getElementById('figmaModal');
+    function closeExportHelpModal() {
+      const modal = document.getElementById('exportHelpModal');
       if (!modal) return;
       modal.classList.remove('is-open');
       modal.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('modal-open');
     }
 
-    function ensureFigmaModal() {
-      if (document.getElementById('figmaModal')) return;
+    function ensureExportHelpModal() {
+      if (document.getElementById('exportHelpModal')) return;
       document.body.insertAdjacentHTML('beforeend', `
-        <div id="figmaModal" class="modal" aria-hidden="true">
+        <div id="exportHelpModal" class="modal" aria-hidden="true">
           <div class="modal-backdrop" data-modal-close tabindex="-1"></div>
-          <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="figmaModalTitle">
+          <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="exportHelpModalTitle">
             <button type="button" class="modal-close" data-modal-close aria-label="">×</button>
-            <h2 id="figmaModalTitle"></h2>
-            <p id="figmaModalNote" class="modal-note"></p>
-            <div id="figmaModalSteps" class="modal-steps"></div>
+            <h2 id="exportHelpModalTitle"></h2>
+            <p id="exportHelpModalNote" class="modal-note"></p>
+            <div id="exportHelpModalSteps" class="modal-steps"></div>
             <div class="modal-footer">
               <button type="button" class="export-btn" data-modal-close-btn data-modal-close></button>
             </div>
           </div>
         </div>`);
-      bindFigmaModal();
+      bindExportHelpModal();
     }
 
-    function bindFigmaModal() {
-      const modal = document.getElementById('figmaModal');
+    function bindExportHelpModal() {
+      const modal = document.getElementById('exportHelpModal');
       if (!modal || modal.dataset.bound) return;
       modal.dataset.bound = '1';
       modal.addEventListener('click', e => {
-        if (e.target.closest('[data-modal-close]')) closeFigmaModal();
+        if (e.target.closest('[data-modal-close]')) closeExportHelpModal();
       });
       document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeFigmaModal();
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeExportHelpModal();
       });
-    }
-
-    function renderFigmaExport() {
-      return `<div class="card" id="figmaExportCard">
-        <h2>${t('figmaTitle')}</h2>
-        <p class="compare-note">${t('figmaIntro')}</p>
-        <div class="export-actions">
-          <button type="button" class="export-btn" data-figma-copy>${ICONS.copy}<span>${t('figmaCopyJson')}</span></button>
-          <button type="button" class="export-btn export-btn-muted" data-figma-help>${ICONS.help}<span>${t('figmaHowTo')}</span></button>
-        </div>
-        <div id="figmaToast" class="toast"></div>
-      </div>`;
     }
 
     function renderScaleTable(c) {
@@ -1130,19 +1351,28 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
     }
 
     function renderCSS(c) {
-      const vanilla = generateVanillaCSS(c);
-      const tailwind = generateTailwindCSS(c);
       const active = state.cssTab;
-      const code = active === 'vanilla' ? vanilla : tailwind;
+      const code = exportCode(c);
+      const introKey = exportIntroKey(active);
+      const showHelp = EXPORT_HELP[active];
 
-      return `<div class="card">
+      return `<div class="card" id="exportCard">
         <h2>${t('cssTitle')}</h2>
-        <div class="tabs">
-          <button type="button" class="${active === 'vanilla' ? 'active' : ''}" data-tab="vanilla">${t('cssVanilla')}</button>
-          <button type="button" class="${active === 'tailwind' ? 'active' : ''}" data-tab="tailwind">${t('cssTailwind')}</button>
+        <div class="tabs-row">
+          <div class="tabs">
+            <button type="button" class="${active === 'vanilla' ? 'active' : ''}" data-tab="vanilla">${t('cssVanilla')}</button>
+            <button type="button" class="${active === 'tailwind' ? 'active' : ''}" data-tab="tailwind">${t('cssTailwind')}</button>
+            <button type="button" class="${active === 'figma-vars' ? 'active' : ''}" data-tab="figma-vars">${t('cssFigmaVars')}</button>
+            <button type="button" class="${active === 'tokens-studio' ? 'active' : ''}" data-tab="tokens-studio">${t('cssTokensStudio')}</button>
+          </div>
+          ${showHelp ? `<button type="button" class="tab-extra" data-export-help="${active}">${ICONS.help}<span>${t('exportHowTo')}</span></button>` : ''}
         </div>
+        ${introKey ? `<p class="compare-note">${t(introKey)}</p>` : ''}
         <div class="code-wrap">
-          <button type="button" class="copy-btn" data-copy>${t('copy')}</button>
+          <div class="code-wrap-actions">
+            <button type="button" class="copy-btn" data-copy>${ICONS.copy}<span>${t('copy')}</span></button>
+            <button type="button" class="copy-btn" data-download>${ICONS.download}<span>${t('btnDownload')}</span></button>
+          </div>
           <pre id="cssOutput">${escapeHtml(code)}</pre>
         </div>
       </div>`;
@@ -1160,7 +1390,6 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         renderPreview(c) +
         renderWCAG(c) +
         renderPractical(c) +
-        renderFigmaExport() +
         renderCSS(c);
 
       bindMainEvents(c);
@@ -1199,8 +1428,14 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
       main.querySelectorAll('.tabs button').forEach(btn => {
         btn.addEventListener('click', () => {
-          state.cssTab = btn.dataset.tab;
+          state.cssTab = normalizeCssTab(btn.dataset.tab);
           render();
+        });
+      });
+
+      main.querySelectorAll('[data-export-help]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          openExportHelpModal(btn.dataset.exportHelp);
         });
       });
 
@@ -1215,24 +1450,24 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         });
       });
 
-      main.querySelector('[data-figma-copy]')?.addEventListener('click', () => {
-        readControls();
-        navigator.clipboard.writeText(generateFigmaJSON(getConfig())).then(() => {
-          showFigmaToast(t('figmaJsonCopied'));
-        });
-      });
-
-      main.querySelector('[data-figma-help]')?.addEventListener('click', () => {
-        openFigmaModal();
-      });
-
       main.querySelector('[data-copy]')?.addEventListener('click', () => {
-        const text = state.cssTab === 'vanilla' ? generateVanillaCSS(c) : generateTailwindCSS(c);
-        navigator.clipboard.writeText(text).then(() => {
-          const btn = main.querySelector('[data-copy]');
+        readControls();
+        navigator.clipboard.writeText(exportCode(getConfig())).then(() => {
+          const btn = main.querySelector('[data-copy] span');
+          if (!btn) return;
+          const prev = btn.textContent;
           btn.textContent = t('copied');
-          setTimeout(() => { btn.textContent = t('copy'); }, 1500);
+          setTimeout(() => { btn.textContent = prev; }, 1500);
         });
+      });
+
+      main.querySelector('[data-download]')?.addEventListener('click', () => {
+        downloadExport();
+        const btn = main.querySelector('[data-download] span');
+        if (!btn) return;
+        const prev = btn.textContent;
+        btn.textContent = t('downloaded');
+        setTimeout(() => { btn.textContent = prev; }, 1500);
       });
     }
 
@@ -1243,5 +1478,5 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
     renderLangToggle();
     buildControls();
     bindControlActions();
-    ensureFigmaModal();
+    ensureExportHelpModal();
     render();

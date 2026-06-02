@@ -62,8 +62,9 @@ font-size-scaler/
 
 ### Figma エクスポート
 
-- [x] SP/PC 端 font-size の JSON コピー（`font-size-scaler-figma-v1`）
-- [x] 使い方モーダル（Variables Import 手順）
+- [x] Variables Import 向け DTCG ZIP（SP/PC 別コレクション）
+- [x] Tokens Studio 向け Typography JSON + `$themes`
+- [x] 4 タブ出力 + 使い方モーダル（Variables Import / Tokens Studio）
 
 ### CSS 出力
 

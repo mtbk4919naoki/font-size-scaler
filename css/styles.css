@@ -400,14 +400,53 @@
       margin-bottom: 0.25rem;
     }
 
+    .tabs-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .tabs-row .tabs {
+      margin-bottom: 0;
+    }
+
+    .tab-extra {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.6rem;
+      font-size: 0.6875rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .tab-extra svg {
+      width: 0.75rem;
+      height: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .tab-extra:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
     .tabs {
       display: flex;
+      flex-wrap: wrap;
       gap: 0.25rem;
       margin-bottom: 0.75rem;
     }
 
     .tabs button {
-      padding: 0.35rem 0.75rem;
+      padding: 0.35rem 0.55rem;
+      font-size: 0.6875rem;
       background: var(--surface-2);
       border: 1px solid var(--border);
       border-radius: 4px;
@@ -424,9 +463,18 @@
 
     .code-wrap { position: relative; }
 
+    .code-wrap-actions {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      display: flex;
+      gap: 0.35rem;
+      z-index: 1;
+    }
+
     pre {
       margin: 0;
-      padding: 0.875rem;
+      padding: 2.25rem 0.875rem 0.875rem;
       background: #0a0c10;
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -439,9 +487,9 @@
     }
 
     .copy-btn {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
       padding: 0.25rem 0.5rem;
       font-size: 0.6875rem;
       background: var(--surface-2);
@@ -449,6 +497,12 @@
       border-radius: 4px;
       color: var(--text-muted);
       cursor: pointer;
+    }
+
+    .copy-btn svg {
+      width: 0.75rem;
+      height: 0.75rem;
+      flex-shrink: 0;
     }
 
     .copy-btn:hover { color: var(--text); border-color: var(--accent); }

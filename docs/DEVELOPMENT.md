@@ -38,7 +38,7 @@ Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 | **persistence** | `serializeState`, `applyState`, `saveToStorage`, `loadFromStorage`, `loadFromUrl`, `buildShareUrl`, `resetToDefaults` |
 | **scale math** | `fluidMin/Max`, `sizeAtViewport`, `applyFloor`, WCAG 判定 |
 | **CSS export** | `cssClampLiteral`, `generateVanillaCSS`, `generateTailwindCSS` |
-| **Figma export** | `generateFigmaJSON`, `renderFigmaExport`, `ensureFigmaModal`, `openFigmaModal` |
+| **Figma export** | `generateFigmaJSON`, `exportCode`, `renderCSS`（Figma JSON タブ）, `ensureFigmaModal` |
 | **UI render** | `renderScaleTable`, `renderPreview`, `renderWCAG`, `renderPractical`, … |
 | **init** | `loadFromStorage`, `loadFromUrl`, `buildControls`, `bindControlActions`, `render()` |
 
@@ -144,30 +144,20 @@ node scripts/verify-formula.mjs
 
 関連関数: `getPracticalChecks()`, `closestIntegerLevel()`, `renderPracticalRow()`
 
-### Figma エクスポート
+### Figma エクスポート（4 タブ）
 
-`generateFigmaJSON(c)` が `format: font-size-scaler-figma-v1` の JSON を生成。
+| タブ | 出力 | 用途 |
+|------|------|------|
+| Variables Import | ZIP（manifest + sp/pc DTCG） | Figma Variables |
+| Tokens Studio | JSON（Typography + `$themes`） | Text Style 生成 |
 
-```json
-{
-  "format": "font-size-scaler-figma-v1",
-  "meta": { "viewportMin", "viewportMax", "modes": ["SP", "PC"], ... },
-  "styles": [
-    {
-      "name": "body",
-      "level": 0,
-      "cssClass": "text-body",
-      "fontSize": { "SP": 15, "PC": 16 },
-      "previewPx": 15.38,
-      "cssClamp": "max(...)"
-    }
-  ]
-}
-```
+- Variables: `buildFigmaBundle()`, Starter 向けに SP/PC を別コレクション
+- Tokens Studio: `generateTokensStudioJSON()`, Token Sets `Type Scale/SP` · `Type Scale/PC`
+- 各 Figma タブに「使い方」モーダル（`EXPORT_HELP`, `exportHelpModal`）
 
-- UI: `renderFigmaExport()` + モーダル（`ensureFigmaModal`, `updateFigmaModalContent`）
-- 取り込み先の例: [Variables Import](https://www.figma.com/community/plugin/1253424530216967528/variables-import)（モード SP/PC → Mobile/Desktop 等にマッピング）
-- **制約**: Figma は連続補間非対応。font family / weight は JSON に含めない
+#### Tokens Studio — SP / PC の使い方
+
+Figma に SP/PC 切替 UI はない。Tokens Studio プラグイン上部のテーマで Token Set を切替え、テキスト選択 → トークンクリックで適用。モバイル用フレーム＝SP、PC 用フレーム＝PC。Text Style に Export する場合、同名（`text-body` 等）は上書きされるためテーマごとに Export するかフレームごとに使い分ける。
 
 ## i18n の追加
 
@@ -185,13 +175,13 @@ node scripts/verify-formula.mjs
 | 永続化キー追加 | `DEFAULTS`, `serializeState`, `PARAM_MAP`, `buildControls` |
 | レベル名 | `defaultLabel()`, `state.labels` |
 | クラス名コピー | `cssClassName()`, `.class-copy-btn` in `renderScaleTable` |
-| Figma JSON | `generateFigmaJSON()`, `renderFigmaExport()`, `I18N` の `figma*` キー |
+| Figma 出力 | `buildFigmaBundle()`, `generateTokensStudioJSON()`, `exportCode()`, `renderCSS()`, `EXPORT_HELP` |
 
 ## 既知の制約・今後の候補
 
 - **file://** — 相対パス `css/` `js/` でローカル打开可（ES modules 不使用）。`localStorage` は利用可
-- **CSS ダウンロード** — 現状コピーのみ
-- **Figma** — JSON エクスポート（SP/PC 離散値）のみ。専用 Figma プラグインでの自動 Style 生成は未実装
+- **CSS ダウンロード** — Vanilla / Tailwind / Variables ZIP / Tokens Studio JSON 各タブから保存
+- **Figma** — Variables Import（DTCG ZIP）+ Tokens Studio（Typography JSON）。専用 Figma プラグインは未実装
 - **pow vs 線形比較** — 表からは削除済み。再掲するなら折りたたみセクション
 - **設定 JSON import** — Figma 以外のファイル import は未実装
 
