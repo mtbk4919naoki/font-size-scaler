@@ -906,7 +906,8 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         el.querySelector('.preview-text').style.fontSize = px + 'px';
       });
 
-      document.querySelector('#wcagTable thead th:nth-child(4)')?.textContent = state.previewViewport + 'px';
+      const wcagHdr = document.querySelector('#wcagTable thead th:nth-child(4)');
+      if (wcagHdr) wcagHdr.textContent = state.previewViewport + 'px';
       document.querySelectorAll('#wcagTable tbody tr').forEach((row, i) => {
         const level = levelsRange()[i];
         if (level == null) return;
