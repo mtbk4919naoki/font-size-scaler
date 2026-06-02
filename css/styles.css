@@ -561,3 +561,138 @@
       margin-top: 0.35rem;
       min-height: 1rem;
     }
+
+    .export-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .export-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.45rem 0.65rem;
+      font-size: 0.75rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .export-btn svg {
+      width: 0.875rem;
+      height: 0.875rem;
+      flex-shrink: 0;
+    }
+
+    .export-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .export-btn-muted:hover {
+      border-color: var(--text-subtle);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal.is-open {
+      display: flex;
+    }
+
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+    }
+
+    .modal-panel {
+      position: relative;
+      width: min(32rem, 100%);
+      max-height: min(85vh, 640px);
+      overflow-y: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.25rem 1rem;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    .modal-panel h2 {
+      margin: 0 2rem 0.75rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      width: 1.75rem;
+      height: 1.75rem;
+      padding: 0;
+      font-size: 1.125rem;
+      line-height: 1;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .modal-note {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0 0 1rem;
+    }
+
+    .modal-steps {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .modal-steps ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    .modal-steps li + li {
+      margin-top: 0.5rem;
+    }
+
+    .modal-steps p {
+      margin: 0.75rem 0 0;
+    }
+
+    .modal-steps a {
+      color: var(--accent);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1.25rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }

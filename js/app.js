@@ -59,6 +59,15 @@
         practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'これより小さい字は Lv < 0',
         cssTitle: 'CSS 出力', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
         copy: 'コピー', copied: 'コピー済',
+        figmaTitle: 'Figma エクスポート',
+        figmaIntro: 'SP / PC 端の font-size を JSON で出力します。Figma Variables の Mobile / Desktop モード取り込み用（fluid clamp 自体は Figma 非対応）。',
+        figmaCopyJson: 'JSON をコピー',
+        figmaHowTo: '使い方',
+        figmaJsonCopied: 'JSON をコピーしました',
+        figmaModalTitle: 'Figma への取り込み方',
+        figmaModalClose: '閉じる',
+        figmaModalNote: '<strong>注意:</strong> Figma は CSS の <code>clamp()</code> による連続補間を再現できません。JSON の <code>fontSize.SP</code> / <code>fontSize.PC</code> を離散モード値として使い、<code>cssClamp</code> は開発向け参考情報です。',
+        figmaModalSteps: '<ol><li>「JSON をコピー」でクリップボードにコピーし、<code>typography.json</code> などとして保存</li><li>Figma で <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> プラグインを開く</li><li>JSON をインポート（プラグインの手順に従い、モード名 <code>SP</code> / <code>PC</code> を Mobile / Desktop 等に対応付け）</li><li>取り込んだ font-size Variables を Text Style にバインド、または Styles & Variables Exporter 等で相互運用</li><li>フォント family / weight は Figma 側で別途指定（JSON には含みません）</li></ol><p>専用プラグインや Tokens Studio を使う場合も、本 JSON の <code>styles</code> 配列を参照してください。</p>',
         intLevel: '（整数なら Lv {n}）',
       },
       en: {
@@ -116,6 +125,15 @@
         practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'Smaller text uses Lv < 0',
         cssTitle: 'CSS output', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
         copy: 'Copy', copied: 'Copied',
+        figmaTitle: 'Figma export',
+        figmaIntro: 'Export SP / PC endpoint font sizes as JSON for Figma Variables (Mobile / Desktop modes). Fluid clamp is not representable in Figma.',
+        figmaCopyJson: 'Copy JSON',
+        figmaHowTo: 'How to use',
+        figmaJsonCopied: 'JSON copied',
+        figmaModalTitle: 'Import into Figma',
+        figmaModalClose: 'Close',
+        figmaModalNote: '<strong>Note:</strong> Figma cannot reproduce continuous <code>clamp()</code> interpolation. Use <code>fontSize.SP</code> / <code>fontSize.PC</code> as discrete mode values; <code>cssClamp</code> is for CSS dev handoff only.',
+        figmaModalSteps: '<ol><li>Click <strong>Copy JSON</strong>, save as e.g. <code>typography.json</code></li><li>In Figma, open the <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> plugin</li><li>Import the JSON and map modes <code>SP</code> / <code>PC</code> to Mobile / Desktop (per plugin instructions)</li><li>Bind imported font-size variables to Text Styles, or use tools like Styles & Variables Exporter for round-trips</li><li>Set font family / weight in Figma separately (not included in JSON)</li></ol><p>For Tokens Studio or a custom plugin, use the <code>styles</code> array as the source of truth.</p>',
         intLevel: '(integer ≈ Lv {n})',
       },
     };
@@ -139,6 +157,8 @@
       share: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M6 9l4-2M6 7l4 2M3 6.5h2M11 9.5h2"/></svg>',
       copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 1h9v9H4V1zm1 1v7h7V2H5zm-2 3h1v9h9v1H3V4z"/></svg>',
       reset: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 0 1 9.3-4M13.5 8a5.5 5.5 0 0 1-9.3 4"/><path d="M11 2.5h2v2M5 13.5H3v-2"/></svg>',
+      help: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M6.2 6.1a1.8 1.8 0 0 1 3.5.7c0 1.2-1.7 1.5-1.7 2.8M8 12.2h.01"/></svg>',
+      figma: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5 16H8V9.3H5.5a2.7 2.7 0 1 0 0 5.4zM8 0H5.5A2.7 2.7 0 0 0 8 2.7V0zM8 8H10.5a2.7 2.7 0 1 0 0-5.4H8V8zm0 2.7V16h2.5A2.7 2.7 0 0 0 8 10.7z"/></svg>',
     };
 
     const RATIO_PRESETS = [
@@ -565,6 +585,7 @@
       renderLangToggle();
       buildControls();
       render();
+      if (document.getElementById('figmaModal')?.classList.contains('is-open')) updateFigmaModalContent();
     }
 
     function refreshPresetButtons() {
@@ -787,6 +808,121 @@ ${fluidBlock}
  *   <p class="fluid text-body">...</p>         (level utility + .fluid)
  */
 ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
+    }
+
+    function generateFigmaJSON(c) {
+      const vw = state.previewViewport;
+      const styles = levelsRange().map(level => {
+        const label = getLabel(level);
+        return {
+          name: label,
+          level,
+          cssClass: cssClassName(level),
+          fontSize: {
+            SP: fmt(effectiveSpMin(level, c)),
+            PC: fmt(fluidMax(level, c)),
+          },
+          previewPx: fmt(sizeAtViewport(level, vw, c)),
+          cssClamp: cssClampLiteral(level, c).clamp,
+        };
+      });
+
+      return JSON.stringify({
+        format: 'font-size-scaler-figma-v1',
+        meta: {
+          source: 'Font Size Scaler',
+          url: 'https://mtbk4919naoki.github.io/font-size-scaler/',
+          viewportMin: c.fontWidthMin,
+          viewportMax: c.fontWidthMax,
+          previewViewport: vw,
+          fontSizeFloor: c.fontSizeFloor,
+          fontSizeMin: c.fontSizeMin,
+          fontSizeMax: c.fontSizeMax,
+          fontRatioMin: c.fontRatioMin,
+          fontRatioMax: c.fontRatioMax,
+          remBase: c.remBase,
+          modes: ['SP', 'PC'],
+          note: 'SP/PC are discrete endpoint sizes. cssClamp is for CSS dev handoff; Figma cannot represent fluid interpolation.',
+        },
+        styles,
+      }, null, 2);
+    }
+
+    function showFigmaToast(msg) {
+      const el = document.getElementById('figmaToast');
+      if (!el) return;
+      el.textContent = msg;
+      setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 2000);
+    }
+
+    function updateFigmaModalContent() {
+      const modal = document.getElementById('figmaModal');
+      if (!modal) return;
+      modal.querySelector('#figmaModalTitle').textContent = t('figmaModalTitle');
+      modal.querySelector('#figmaModalNote').innerHTML = t('figmaModalNote');
+      modal.querySelector('#figmaModalSteps').innerHTML = t('figmaModalSteps');
+      modal.querySelector('[data-modal-close-btn]').textContent = t('figmaModalClose');
+      modal.querySelector('.modal-close').setAttribute('aria-label', t('figmaModalClose'));
+    }
+
+    function openFigmaModal() {
+      ensureFigmaModal();
+      updateFigmaModalContent();
+      const modal = document.getElementById('figmaModal');
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      modal.querySelector('.modal-close').focus();
+    }
+
+    function closeFigmaModal() {
+      const modal = document.getElementById('figmaModal');
+      if (!modal) return;
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    function ensureFigmaModal() {
+      if (document.getElementById('figmaModal')) return;
+      document.body.insertAdjacentHTML('beforeend', `
+        <div id="figmaModal" class="modal" aria-hidden="true">
+          <div class="modal-backdrop" data-modal-close tabindex="-1"></div>
+          <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="figmaModalTitle">
+            <button type="button" class="modal-close" data-modal-close aria-label="">×</button>
+            <h2 id="figmaModalTitle"></h2>
+            <p id="figmaModalNote" class="modal-note"></p>
+            <div id="figmaModalSteps" class="modal-steps"></div>
+            <div class="modal-footer">
+              <button type="button" class="export-btn" data-modal-close-btn data-modal-close></button>
+            </div>
+          </div>
+        </div>`);
+      bindFigmaModal();
+    }
+
+    function bindFigmaModal() {
+      const modal = document.getElementById('figmaModal');
+      if (!modal || modal.dataset.bound) return;
+      modal.dataset.bound = '1';
+      modal.addEventListener('click', e => {
+        if (e.target.closest('[data-modal-close]')) closeFigmaModal();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && modal.classList.contains('is-open')) closeFigmaModal();
+      });
+    }
+
+    function renderFigmaExport() {
+      return `<div class="card" id="figmaExportCard">
+        <h2>${t('figmaTitle')}</h2>
+        <p class="compare-note">${t('figmaIntro')}</p>
+        <div class="export-actions">
+          <button type="button" class="export-btn" data-figma-copy>${ICONS.copy}<span>${t('figmaCopyJson')}</span></button>
+          <button type="button" class="export-btn export-btn-muted" data-figma-help>${ICONS.help}<span>${t('figmaHowTo')}</span></button>
+        </div>
+        <div id="figmaToast" class="toast"></div>
+      </div>`;
     }
 
     function renderScaleTable(c) {
@@ -1024,6 +1160,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         renderPreview(c) +
         renderWCAG(c) +
         renderPractical(c) +
+        renderFigmaExport() +
         renderCSS(c);
 
       bindMainEvents(c);
@@ -1078,6 +1215,17 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         });
       });
 
+      main.querySelector('[data-figma-copy]')?.addEventListener('click', () => {
+        readControls();
+        navigator.clipboard.writeText(generateFigmaJSON(getConfig())).then(() => {
+          showFigmaToast(t('figmaJsonCopied'));
+        });
+      });
+
+      main.querySelector('[data-figma-help]')?.addEventListener('click', () => {
+        openFigmaModal();
+      });
+
       main.querySelector('[data-copy]')?.addEventListener('click', () => {
         const text = state.cssTab === 'vanilla' ? generateVanillaCSS(c) : generateTailwindCSS(c);
         navigator.clipboard.writeText(text).then(() => {
@@ -1095,4 +1243,5 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
     renderLangToggle();
     buildControls();
     bindControlActions();
+    ensureFigmaModal();
     render();
