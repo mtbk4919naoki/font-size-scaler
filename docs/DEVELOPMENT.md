@@ -22,7 +22,7 @@ font-size-scaler/
 | 環境 | URL / 方法 |
 |------|------------|
 | GitHub Pages | https://mtbk4919naoki.github.io/font-size-scaler/ |
-| ローカル | `open index.html`（`css/` `js/` を相対参照） |
+| ローカル | `./scripts/serve.sh` → http://localhost:8080（推奨） |
 
 Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 
