@@ -80,6 +80,13 @@ font-size-scaler/
 7. [x] Vanilla / Tailwind CSS ジェネレータ + コピー
 8. [x] README.md
 
+---
+
+## 現在の構成（2026-06）
+
+単一 `index.html` から **`css/styles.css` + `js/app.js`** に分割済み。
+引き継ぎは **[docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md)** を参照。
+
 ## 完了条件
 
 - デフォルト値（SP 1.2 / PC 1.333 / base 16&20 / width 320&1440）で記事と一致する数値が出る
