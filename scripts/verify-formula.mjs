@@ -4,8 +4,8 @@
 const DEFAULTS = {
   fontSizeMin: 15,
   fontSizeMax: 16,
-  fontRatioMin: 1.2,
-  fontRatioMax: 1.333,
+  fontRatioMin: 1.15,
+  fontRatioMax: 1.3,
   fontWidthMin: 360,
   fontWidthMax: 1440,
   fontSizeFloor: 8,

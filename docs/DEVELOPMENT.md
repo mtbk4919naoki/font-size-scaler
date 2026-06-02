@@ -87,8 +87,8 @@ Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 | -------- | ---------- | -- |
 | `sm` | `fontSizeMin` | 15 |
 | `sx` | `fontSizeMax` | 16 |
-| `rm` | `fontRatioMin` | 1.2 |
-| `rx` | `fontRatioMax` | 1.333 |
+| `rm` | `fontRatioMin` | 1.15 |
+| `rx` | `fontRatioMax` | 1.3 |
 | `wm` | `fontWidthMin` | 360 |
 | `wx` | `fontWidthMax` | 1440 |
 | `fl` | `fontSizeFloor` | 8 |
@@ -99,10 +99,10 @@ Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 | `vw` | `previewViewport` | 768 |
 | `sp1` | `targetSp1` | 10 |
 | `sp2` | `targetSp2` | 18 |
-| `sp3` | `targetSp3` | 26 |
+| `sp3` | `targetSp3` | 24 |
 | `pc1` | `targetPc1` | 10 |
 | `pc2` | `targetPc2` | 21 |
-| `pc3` | `targetPc3` | 38 |
+| `pc3` | `targetPc3` | 36 |
 | `spa` / `spb` / `pca` / `pcb` | 上記 1・2 へ（後方互換） | — |
 | `lng` | `lang` | ja |
 | `tab` | `cssTab` | vanilla |
@@ -161,12 +161,12 @@ node scripts/verify-formula.mjs
 | 変数 | 初期値 |
 | ---- | ------ |
 | SP / PC 基底 | 15px / 16px |
-| SP / PC スケール比 | 1.2 / 1.333 |
+| SP / PC スケール比 | 1.15 / 1.3 |
 | ビューポート | 360px 〜 1440px |
 | 絶対下限 | 8px |
 | 表示レベル | -3 〜 9 |
-| 目標サイズ SP 1 / 2 / 3 | 10px / 18px / 26px |
-| 目標サイズ PC 1 / 2 / 3 | 10px / 21px / 38px |
+| 目標サイズ SP 1 / 2 / 3 | 10px / 18px / 24px |
+| 目標サイズ PC 1 / 2 / 3 | 10px / 21px / 36px |
 | プレビュー vw | 768px |
 | プレビュータブ | list |
 | Google Font | （空 = システムデフォルト） |
