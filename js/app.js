@@ -20,10 +20,8 @@
         secTargetSize: '目標サイズ',
         targetSp1: 'SP 1 (px)', targetSp2: 'SP 2 (px)', targetSp3: 'SP 3 (px)',
         targetPc1: 'PC 1 (px)', targetPc2: 'PC 2 (px)', targetPc3: 'PC 3 (px)',
-        targetIntro: '各目標 px に SP / PC 端点で最接近するレベルにバッジ表示。',
         colTarget: '目標',
         tipTarget: 'SP / PC 端点の目標 px に最接近するレベル（サイドバーで設定）。',
-        targetNote: '目標列: 各 px を SP/PC 端点サイズに最接近するレベルに表示。Lv0 (SP) = {size}。',
         btnSave: 'ブラウザに保存', btnShare: '共有URLをコピー', btnReset: '初期状態に戻す',
         saved: '保存しました', shared: 'URL をコピーしました', resetDone: '初期状態に戻しました',
         classCopied: 'コピーしました',
@@ -92,7 +90,6 @@
         sampleFooterLink: 'リンク項目',
         sampleFooterCopy: '© 2026 Acme Docs',
         previewSample: 'あいうえお The quick brown fox — {label}',
-        wcagNote: 'WCAG: 本文 <strong>16px 推奨</strong>（1.4.4）。大文字 AA ≥24px / 太字 ≥19px（3:1）、AAA ≥24px / 太字 ≥18.67px（4.5:1）。WCAG 列は SP サイズ基準。',
         colWcag: 'WCAG',
         tipWcag: '本文 16px 判定と大文字 AA/AAA 区分（SP 端点サイズ基準）。',
         wcagBodyOk: 'AA 推奨', wcagBodySmall: 'やや小', wcagBodyCaption: '注釈向け',
@@ -130,10 +127,8 @@
         secTargetSize: 'Target sizes',
         targetSp1: 'SP 1 (px)', targetSp2: 'SP 2 (px)', targetSp3: 'SP 3 (px)',
         targetPc1: 'PC 1 (px)', targetPc2: 'PC 2 (px)', targetPc3: 'PC 3 (px)',
-        targetIntro: 'Badge on the nearest level to each SP/PC endpoint target px.',
         colTarget: 'Target',
         tipTarget: 'Nearest level at SP/PC endpoint for sidebar target px values.',
-        targetNote: 'Target column: nearest level per px at SP/PC endpoints. Lv0 (SP) = {size}.',
         btnSave: 'Save to browser', btnShare: 'Copy share URL', btnReset: 'Reset to defaults',
         saved: 'Saved', shared: 'URL copied', resetDone: 'Reset to defaults',
         classCopied: 'Copied',
@@ -202,7 +197,6 @@
         sampleFooterLink: 'Link item',
         sampleFooterCopy: '© 2026 Acme Docs',
         previewSample: 'The quick brown fox — {label}',
-        wcagNote: 'WCAG: <strong>16px body</strong> recommended (1.4.4). Large AA ≥24px / bold ≥19px (3:1), AAA ≥24px / bold ≥18.67px (4.5:1). WCAG column uses SP endpoint size.',
         colWcag: 'WCAG',
         tipWcag: '16px body guidance and large-text AA/AAA (based on SP endpoint size).',
         wcagBodyOk: 'AA OK', wcagBodySmall: 'Slightly small', wcagBodyCaption: 'Caption',
@@ -1586,8 +1580,6 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
           <h2>${t('scaleTable')}</h2>
           <span id="scaleToast" class="toast scale-toast"></span>
         </div>
-        <p class="compare-note">${t('wcagNote', { floor: c.fontSizeFloor, vw })}</p>
-        <p class="compare-note">${t('targetNote', { size: fmtPx(effectiveSpMin(0, c)) })} ${t('targetIntro')}</p>
         <table id="scaleTable">
           <thead><tr>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead>
           <tbody>${rows}</tbody>
