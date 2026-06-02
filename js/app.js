@@ -169,12 +169,10 @@
 
     function t(key, vars = {}) {
       let s = (I18N[state.lang] || I18N.en)[key] ?? key;
-      Object.entries(vars).forEach(([k, v]) => { s = s.replaceAll(`{${k}}`, v); });
+      Object.entries(vars).forEach(([k, v]) => {
+        s = s.replaceAll(`{${k}}`, escapeHtml(String(v)));
+      });
       return s;
-    }
-
-    function escapeAttr(s) {
-      return s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     }
 
     function thTip(label, tip) {
@@ -240,6 +238,133 @@
       lng: 'lang', tab: 'cssTab',
     };
     const INT_STATE_KEYS = new Set(['fontWidthMin', 'fontWidthMax', 'remBase', 'levelMin', 'levelMax', 'previewViewport']);
+    const ALLOWED_LANGS = new Set(['ja', 'en']);
+    const ALLOWED_VARIABLE_UNITS = new Set(['100vi', '100cqi']);
+    const MAX_LABEL_LEN = 32;
+    const MAX_LB_PARAM_LEN = 1024;
+    const MAX_STORAGE_BYTES = 32768;
+    const MAX_LEVEL_SPAN = 24;
+    const LEVEL_KEY_MIN = -6;
+    const LEVEL_KEY_MAX = 12;
+
+    const FIELD_BOUNDS = {
+      fontSizeMin: { min: 8, max: 48 },
+      fontSizeMax: { min: 8, max: 72 },
+      fontRatioMin: { min: 1.01, max: 2 },
+      fontRatioMax: { min: 1.01, max: 2 },
+      fontWidthMin: { min: 240, max: 1200 },
+      fontWidthMax: { min: 600, max: 2560 },
+      fontSizeFloor: { min: 0, max: 24 },
+      remBase: { min: 10, max: 24 },
+      levelMin: { min: -6, max: 10 },
+      levelMax: { min: -6, max: 12 },
+      previewViewport: { min: 240, max: 2560 },
+      practicalSpA: { min: 6, max: 72 },
+      practicalSpB: { min: 6, max: 72 },
+      practicalPcA: { min: 6, max: 72 },
+      practicalPcB: { min: 6, max: 72 },
+    };
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function escapeAttr(s) {
+      return escapeHtml(s);
+    }
+
+    function clampFiniteNumber(value, min, max, fallback) {
+      const n = typeof value === 'number' ? value : parseFloat(value);
+      if (!Number.isFinite(n)) return fallback;
+      return Math.min(max, Math.max(min, n));
+    }
+
+    function normalizeLang(lang) {
+      return ALLOWED_LANGS.has(lang) ? lang : 'ja';
+    }
+
+    function normalizeVariableUnit(unit) {
+      return ALLOWED_VARIABLE_UNITS.has(unit) ? unit : DEFAULTS.variableUnit;
+    }
+
+    function sanitizeLabelString(value) {
+      if (typeof value !== 'string') return '';
+      return value
+        .trim()
+        .slice(0, MAX_LABEL_LEN)
+        .replace(/[\x00-\x1f\x7f<>`]/g, '');
+    }
+
+    function sanitizeLabels(raw, levelMin, levelMax) {
+      const labels = {};
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return labels;
+      const lo = Math.max(LEVEL_KEY_MIN, levelMin - 6);
+      const hi = Math.min(LEVEL_KEY_MAX, levelMax + 6);
+      for (const key of Object.keys(raw)) {
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
+        const level = parseInt(key, 10);
+        if (!Number.isInteger(level) || level < lo || level > hi) continue;
+        const label = sanitizeLabelString(raw[key]);
+        if (label) labels[level] = label;
+      }
+      return labels;
+    }
+
+    function clampStateFields() {
+      Object.entries(FIELD_BOUNDS).forEach(([key, bounds]) => {
+        const fallback = DEFAULTS[key];
+        const isInt = INT_STATE_KEYS.has(key);
+        const n = clampFiniteNumber(state[key], bounds.min, bounds.max, fallback);
+        state[key] = isInt ? Math.round(n) : n;
+      });
+      if (state.levelMin > state.levelMax) {
+        [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
+      }
+      state.variableUnit = normalizeVariableUnit(state.variableUnit);
+      state.lang = normalizeLang(state.lang);
+      state.cssTab = normalizeCssTab(state.cssTab);
+      state.labels = sanitizeLabels(state.labels, state.levelMin, state.levelMax);
+    }
+
+    function sanitizeExternalState(data) {
+      if (!data || typeof data !== 'object' || Array.isArray(data)) return null;
+      const out = {};
+      Object.entries(FIELD_BOUNDS).forEach(([key, bounds]) => {
+        if (data[key] == null) return;
+        const fallback = DEFAULTS[key];
+        const isInt = INT_STATE_KEYS.has(key);
+        const n = clampFiniteNumber(data[key], bounds.min, bounds.max, fallback);
+        out[key] = isInt ? Math.round(n) : n;
+      });
+      if (data.previewViewport != null) {
+        out.previewViewport = Math.round(clampFiniteNumber(
+          data.previewViewport,
+          FIELD_BOUNDS.previewViewport.min,
+          FIELD_BOUNDS.previewViewport.max,
+          DEFAULTS.previewViewport,
+        ));
+      }
+      if (data.lang != null) out.lang = normalizeLang(data.lang);
+      if (data.cssTab != null) out.cssTab = normalizeCssTab(data.cssTab);
+      if (data.variableUnit != null) out.variableUnit = normalizeVariableUnit(data.variableUnit);
+      const levelMin = out.levelMin ?? state.levelMin ?? DEFAULTS.levelMin;
+      const levelMax = out.levelMax ?? state.levelMax ?? DEFAULTS.levelMax;
+      if (data.labels && typeof data.labels === 'object' && !Array.isArray(data.labels)) {
+        out.labels = sanitizeLabels(data.labels, levelMin, levelMax);
+      }
+      if (data.practicalTarget1 != null && data.practicalSpA == null) {
+        out.practicalSpA = clampFiniteNumber(data.practicalTarget1, 6, 72, DEFAULTS.practicalSpA);
+      }
+      if (data.practicalTarget2 != null && data.practicalPcA == null) {
+        out.practicalPcA = clampFiniteNumber(data.practicalTarget2, 6, 72, DEFAULTS.practicalPcA);
+      }
+      return out;
+    }
 
     function serializeState() {
       return {
@@ -252,18 +377,18 @@
     }
 
     function applyState(data) {
-      if (!data || typeof data !== 'object') return;
+      const clean = sanitizeExternalState(data);
+      if (!clean) return;
       Object.keys(DEFAULTS).forEach(k => {
-        if (data[k] == null) return;
-        state[k] = INT_STATE_KEYS.has(k) ? parseInt(data[k], 10) : parseFloat(data[k]);
+        if (clean[k] == null) return;
+        state[k] = clean[k];
       });
-      if (data.previewViewport != null) state.previewViewport = parseInt(data.previewViewport, 10);
-      if (data.labels && typeof data.labels === 'object') state.labels = { ...data.labels };
-      if (data.cssTab) state.cssTab = normalizeCssTab(data.cssTab);
-      if (data.lang) state.lang = data.lang;
-      if (data.practicalTarget1 != null && data.practicalSpA == null) state.practicalSpA = parseFloat(data.practicalTarget1);
-      if (data.practicalTarget2 != null && data.practicalPcA == null) state.practicalPcA = parseFloat(data.practicalTarget2);
-      if (data.variableUnit) state.variableUnit = data.variableUnit;
+      if (clean.previewViewport != null) state.previewViewport = clean.previewViewport;
+      if (clean.labels) state.labels = clean.labels;
+      if (clean.cssTab) state.cssTab = clean.cssTab;
+      if (clean.lang) state.lang = clean.lang;
+      if (clean.variableUnit) state.variableUnit = clean.variableUnit;
+      clampStateFields();
     }
 
     function saveToStorage() {
@@ -273,7 +398,9 @@
     function loadFromStorage() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) applyState(JSON.parse(raw));
+        if (!raw || raw.length > MAX_STORAGE_BYTES) return;
+        const data = JSON.parse(raw);
+        applyState(data);
       } catch (_) {}
     }
 
@@ -297,14 +424,30 @@
       Object.entries(PARAM_MAP).forEach(([short, key]) => {
         if (!p.has(short)) return;
         const v = p.get(short);
-        data[key] = INT_STATE_KEYS.has(key) ? parseInt(v, 10) : (key === 'lang' || key === 'cssTab' || key === 'variableUnit' ? v : parseFloat(v));
+        if (v == null || v.length > 64) return;
+        if (INT_STATE_KEYS.has(key)) data[key] = parseInt(v, 10);
+        else if (key === 'lang' || key === 'cssTab' || key === 'variableUnit') data[key] = v;
+        else data[key] = parseFloat(v);
       });
       if (p.has('lb')) {
-        data.labels = {};
-        p.get('lb').split(',').forEach(pair => {
-          const i = pair.indexOf(':');
-          if (i > 0) data.labels[parseInt(pair.slice(0, i), 10)] = decodeURIComponent(pair.slice(i + 1));
-        });
+        const lbRaw = p.get('lb');
+        if (lbRaw && lbRaw.length <= MAX_LB_PARAM_LEN) {
+          data.labels = {};
+          lbRaw.split(',').forEach(pair => {
+            if (!pair) return;
+            const i = pair.indexOf(':');
+            if (i <= 0) return;
+            const level = parseInt(pair.slice(0, i), 10);
+            if (!Number.isInteger(level)) return;
+            let label;
+            try {
+              label = decodeURIComponent(pair.slice(i + 1));
+            } catch (_) {
+              return;
+            }
+            data.labels[level] = label;
+          });
+        }
       }
       applyState(data);
     }
@@ -327,8 +470,18 @@
       setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 2000);
     }
 
+    function cssSlug(level) {
+      const raw = String(state.labels[level] ?? defaultLabel(level));
+      const slug = raw.trim().toLowerCase()
+        .replace(/[^\w-]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, MAX_LABEL_LEN);
+      return slug || defaultLabel(level);
+    }
+
     function cssClassName(level) {
-      return `text-${getLabel(level)}`;
+      return `text-${cssSlug(level)}`;
     }
 
     function resetToDefaults() {
@@ -437,7 +590,12 @@
     }
 
     function getLabel(level) {
-      return state.labels[level] ?? defaultLabel(level);
+      const custom = state.labels[level];
+      if (custom != null && custom !== '') {
+        const safe = sanitizeLabelString(custom);
+        if (safe) return safe;
+      }
+      return defaultLabel(level);
     }
 
     function defaultLabel(level) {
@@ -482,8 +640,14 @@
     }
 
     function levelsRange() {
+      const lo = Math.max(LEVEL_KEY_MIN, Math.min(10, state.levelMin));
+      const hi = Math.min(LEVEL_KEY_MAX, Math.max(-6, state.levelMax));
+      const min = Math.min(lo, hi);
+      const max = Math.max(lo, hi);
+      const span = max - min;
+      const cappedMax = span > MAX_LEVEL_SPAN ? min + MAX_LEVEL_SPAN : max;
       const arr = [];
-      for (let i = state.levelMin; i <= state.levelMax; i++) arr.push(i);
+      for (let i = min; i <= cappedMax; i++) arr.push(i);
       return arr;
     }
 
@@ -609,7 +773,7 @@
 
     function setLang(lang) {
       if (document.getElementById('fontSizeMin')) readControls();
-      state.lang = lang;
+      state.lang = normalizeLang(lang);
       document.documentElement.lang = lang;
       document.getElementById('headerSubtitle').innerHTML = t('headerSubtitle');
       renderLangToggle();
@@ -663,6 +827,7 @@
       if (state.levelMin > state.levelMax) {
         [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
       }
+      clampStateFields();
     }
 
     function getPracticalChecks() {
@@ -709,7 +874,7 @@
       const isCenter = level === centerLevel;
       return `<td class="cell-neighbor${isCenter ? ' highlight-cell' : ''}">
         <strong>Lv ${level}</strong>
-        <span class="cell-muted">${getLabel(level)}</span>
+        <span class="cell-muted">${escapeHtml(getLabel(level))}</span>
         ${fmtPx(size)}
         <span class="cell-muted">${diffStr}</span>
         ${isCenter ? `<span class="badge badge-ok">${t('badgeClosest')}</span>` : ''}
@@ -750,8 +915,7 @@
       const levels = levelsRange();
 
       let utilClasses = levels.map(l => {
-        const name = getLabel(l);
-        return `.text-${name} {\n  --font-level: ${l};\n}`;
+        return `.${cssClassName(l)} {\n  --font-level: ${l};\n}`;
       }).join('\n\n');
 
       return `/*
@@ -803,8 +967,7 @@ ${utilClasses}`;
       const levels = levelsRange();
 
       const themeTokens = levels.map(l => {
-        const name = getLabel(l);
-        return `  --text-fluid-${name}: ${cssClampLiteral(l, c).clamp};`;
+        return `  --text-fluid-${cssSlug(l)}: ${cssClampLiteral(l, c).clamp};`;
       }).join('\n');
 
       const fluidBlock = `:where(.fluid) {
@@ -840,20 +1003,14 @@ ${fluidBlock}
  *   <p class="fluid text-fluid-body">...</p>  (precomputed clamp tokens)
  *   <p class="fluid text-body">...</p>         (level utility + .fluid)
  */
-${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
-    }
-
-    function figmaTokenKey(label, level) {
-      const key = String(label).trim().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
-      return key || `lv-${level}`;
+${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
     }
 
     function buildFigmaModeTokens(c, mode) {
       const group = {};
       for (const level of levelsRange()) {
-        const label = getLabel(level);
         const px = mode === 'SP' ? effectiveSpMin(level, c) : fluidMax(level, c);
-        const key = figmaTokenKey(label, level);
+        const key = cssSlug(level);
         group[key] = {
           $type: 'dimension',
           $value: `${fmt(px)}px`,
@@ -1183,14 +1340,14 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
         rows += `<tr class="${rowClass}">
           <td>${level}</td>
-          <td><input class="label-input" data-level="${level}" value="${getLabel(level)}"></td>
+          <td><input class="label-input" data-level="${level}" value="${escapeAttr(getLabel(level))}"></td>
           <td>${spCell}</td>
           <td>${fmtPx(pc)}</td>
           <td>${fmtPx(atVw)}</td>
           <td>${jumpSp}</td>
           <td>${jumpPc}</td>
           <td>${notes}</td>
-          <td><button type="button" class="class-copy-btn" data-class="${cssClassName(level)}" title="${escapeAttr(cssClassName(level))}">${ICONS.copy}<span>CSS</span></button></td>
+          <td><button type="button" class="class-copy-btn" data-class="${escapeAttr(cssClassName(level))}" title="${escapeAttr(cssClassName(level))}">${ICONS.copy}<span>CSS</span></button></td>
         </tr>`;
       });
 
@@ -1229,7 +1386,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
       const blocks = levels.map(level => {
         const px = sizeAtViewport(level, vw, c);
         return `<div class="preview-block" data-preview-level="${level}">
-          <div class="preview-meta">Lv ${level} · ${getLabel(level)} · <span class="preview-px">${fmtPx(px)}</span> @ <span class="preview-vw">${vw}</span>px</div>
+          <div class="preview-meta">Lv ${level} · ${escapeHtml(getLabel(level))} · <span class="preview-px">${fmtPx(px)}</span> @ <span class="preview-vw">${vw}</span>px</div>
           <div class="preview-text" style="font-size: ${px}px">${t('previewSample', { label: getLabel(level) })}</div>
         </div>`;
       }).join('');
@@ -1301,7 +1458,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
           : `${t('wcagNormal')} <small>(${w.largeSp.contrast})</small>`;
         return `<tr>
           <td>${level}</td>
-          <td>${getLabel(level)}</td>
+          <td>${escapeHtml(getLabel(level))}</td>
           <td>${fmtPx(w.sp)}</td>
           <td>${fmtPx(w.atVw)}</td>
           <td><span class="badge ${w.body.badge}">${w.body.label}</span></td>
@@ -1378,10 +1535,6 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
       </div>`;
     }
 
-    function escapeHtml(s) {
-      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
-
     function render() {
       const c = getConfig();
       const main = document.getElementById('main');
@@ -1421,7 +1574,10 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
       main.querySelectorAll('.label-input').forEach(input => {
         input.addEventListener('change', () => {
-          state.labels[parseInt(input.dataset.level, 10)] = input.value.trim() || defaultLabel(parseInt(input.dataset.level, 10));
+          const level = parseInt(input.dataset.level, 10);
+          const label = sanitizeLabelString(input.value.trim());
+          state.labels[level] = label || defaultLabel(level);
+          clampStateFields();
           render();
         });
       });
@@ -1473,6 +1629,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
     loadFromStorage();
     loadFromUrl();
+    clampStateFields();
     document.documentElement.lang = state.lang;
     document.getElementById('headerSubtitle').innerHTML = t('headerSubtitle');
     renderLangToggle();

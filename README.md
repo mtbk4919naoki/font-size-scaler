@@ -74,6 +74,7 @@ scripts/
 
 ```bash
 node scripts/verify-formula.mjs   # 計算式の一致確認
+node scripts/verify-security.mjs  # URL/localStorage サニタイズの回帰チェック
 ```
 
 ## デフォルト値
