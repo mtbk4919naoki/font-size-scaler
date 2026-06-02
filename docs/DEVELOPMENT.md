@@ -87,7 +87,7 @@ node scripts/verify-formula.mjs
 |--------------|-----------------|
 | 列見出し・ツールチップ | `I18N` + `renderScaleTable()` |
 | 新しい CSS 変数 | `generateVanillaCSS`, `getConfig`, `buildControls` |
-| WCAG 閾値 | `WCAG` 定数 + `wcagBodyStatus()` |
+| 実用チェック | `getPracticalTargets()`, `closestIntegerLevel()`, `renderNeighborTable()` |
 | レベル名 | `defaultLabel()` |
 
 ## 既知の制約・今後の候補

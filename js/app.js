@@ -16,7 +16,16 @@
         remBase: 'rem 換算基準 (px)', variableUnit: '--variable-unit',
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: '表示レベル min', levelMax: '表示レベル max',
-        targetBodyPx: '実用チェック: 目標本文サイズ (px)',
+        secPractical: '実用チェック',
+        practicalTarget1: '目標サイズ A (px)',
+        practicalTarget2: '目標サイズ B (px)',
+        practicalIntro: '各目標 px について、SP / PC それぞれで最も近い整数レベルとその前後 1 段階を表示します。',
+        practicalTargetHeading: '目標 {px}px',
+        practicalSpBlock: 'SP（{vw}px 時）— 最接近 Lv {level}（{size}、Δ {diff}px）',
+        practicalPcBlock: 'PC（{vw}px 時）— 最接近 Lv {level}（{size}、Δ {diff}px）',
+        colDiff: '差分',
+        badgeClosest: '最接近',
+        rowPrev: '1つ下', rowNext: '1つ上',
         scaleTable: 'スケール表',
         scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — ジャンプ率は SP {spJump} / PC {pcJump} で一定（下限適用時のみ SP が変動）。絶対下限 {floor}px 未満はクランプ。',
         colLevel: 'レベル', colUsage: '用途', colSp: '(SP)', colPc: '(PC)',
@@ -45,13 +54,8 @@
         wcagLargeAaa: '大文字 AAA', wcagLargeAa: '大文字 AA', wcagNormal: '通常文字',
         wcagNormalShort: '通常 (4.5:1)',
         practicalTitle: '実用チェック',
-        practicalLv0Match: '現在 Lv0 = 目標サイズ。Lv0 より小さい字は負のレベルが必要。',
-        practicalLv0Note: 'Lv0 = {size}。目標 {target}px は Lv {level} 付近。',
-        practicalSpLevel: 'SP で {px}px になるレベル', practicalPcLevel: 'PC で {px}px になるレベル',
-        practicalClosest: '(SP) が {px}px に最も近い整数レベル',
-        practicalLv0Sp: 'Lv0 の SP サイズ', practicalLv0Hint: 'これより小さい字は Lv < 0',
-        practicalCandidates: 'Lv 2〜4 で SP {px}px を通る --font-size-min 候補',
-        colLevelShort: 'レベル', colNeededBase: '必要な --font-size-min', colVerify: '検算',
+        practicalLv0Note: 'Lv0 (SP) = {size}。',
+        practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'これより小さい字は Lv < 0',
         cssTitle: 'CSS 出力', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
         copy: 'コピー', copied: 'コピー済',
         intLevel: '（整数なら Lv {n}）',
@@ -68,7 +72,16 @@
         remBase: 'rem base (px)', variableUnit: '--variable-unit',
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: 'Display level min', levelMax: 'Display level max',
-        targetBodyPx: 'Practical check: target body size (px)',
+        secPractical: 'Practical check',
+        practicalTarget1: 'Target size A (px)',
+        practicalTarget2: 'Target size B (px)',
+        practicalIntro: 'For each target px, shows the nearest integer level on SP / PC and one step above and below.',
+        practicalTargetHeading: 'Target {px}px',
+        practicalSpBlock: 'SP ({vw}px) — nearest Lv {level} ({size}, Δ {diff}px)',
+        practicalPcBlock: 'PC ({vw}px) — nearest Lv {level} ({size}, Δ {diff}px)',
+        colDiff: 'Diff',
+        badgeClosest: 'nearest',
+        rowPrev: 'below', rowNext: 'above',
         scaleTable: 'Scale table',
         scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — jump rate is constant at SP {spJump} / PC {pcJump} (SP varies when floor applies). Values below {floor}px are clamped.',
         colLevel: 'Level', colUsage: 'Usage', colSp: '(SP)', colPc: '(PC)',
@@ -97,13 +110,8 @@
         wcagLargeAaa: 'Large AAA', wcagLargeAa: 'Large AA', wcagNormal: 'Normal',
         wcagNormalShort: 'Normal (4.5:1)',
         practicalTitle: 'Practical check',
-        practicalLv0Match: 'Lv0 = target size. Smaller text needs negative levels.',
-        practicalLv0Note: 'Lv0 = {size}. Target {target}px is near Lv {level}.',
-        practicalSpLevel: 'Level for {px}px at SP', practicalPcLevel: 'Level for {px}px at PC',
-        practicalClosest: 'Integer level closest to {px}px at SP',
-        practicalLv0Sp: 'Lv0 SP size', practicalLv0Hint: 'Smaller text uses Lv < 0',
-        practicalCandidates: '--font-size-min candidates for {px}px at Lv 2–4',
-        colLevelShort: 'Level', colNeededBase: 'Required --font-size-min', colVerify: 'Verify',
+        practicalLv0Note: 'Lv0 (SP) = {size}.',
+        practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'Smaller text uses Lv < 0',
         cssTitle: 'CSS output', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
         copy: 'Copy', copied: 'Copied',
         intLevel: '(integer ≈ Lv {n})',
@@ -157,7 +165,8 @@
       variableUnit: '100vi',
       levelMin: -3,
       levelMax: 9,
-      targetBodyPx: 16,
+      practicalTarget1: 16,
+      practicalTarget2: 12,
       previewViewport: 768,
     };
 
@@ -358,9 +367,16 @@
             <input type="number" id="levelMax" value="${state.levelMax}" min="-6" max="12" step="1">
           </div>
         </div>
-        <div class="field">
-          <label for="targetBodyPx">${t('targetBodyPx')}</label>
-          <input type="number" id="targetBodyPx" value="${state.targetBodyPx}" min="10" max="24" step="0.5">
+        <div class="section-title">${t('secPractical')}</div>
+        <div class="field-row">
+          <div class="field">
+            <label for="practicalTarget1">${t('practicalTarget1')}</label>
+            <input type="number" id="practicalTarget1" value="${state.practicalTarget1}" min="6" max="72" step="0.5">
+          </div>
+          <div class="field">
+            <label for="practicalTarget2">${t('practicalTarget2')}</label>
+            <input type="number" id="practicalTarget2" value="${state.practicalTarget2}" min="6" max="72" step="0.5">
+          </div>
         </div>
       `;
 
@@ -428,34 +444,86 @@
       state.variableUnit = document.getElementById('variableUnit').value;
       state.levelMin = int('levelMin');
       state.levelMax = int('levelMax');
-      state.targetBodyPx = num('targetBodyPx');
+      state.practicalTarget1 = num('practicalTarget1');
+      state.practicalTarget2 = num('practicalTarget2');
       if (state.levelMin > state.levelMax) {
         [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
       }
     }
 
-    function practicalCheck(c) {
-      const target = state.targetBodyPx;
-      const spLevel = levelForSize(target, true, c);
-      const pcLevel = levelForSize(target, false, c);
+    function getPracticalTargets() {
+      return [state.practicalTarget1, state.practicalTarget2].filter(px => px > 0);
+    }
 
-      let closestLevel = null;
-      let closestDiff = Infinity;
-      for (let l = -6; l <= 10; l++) {
-        const diff = Math.abs(effectiveSpMin(l, c) - target);
-        if (diff < closestDiff) {
-          closestDiff = diff;
-          closestLevel = l;
+    function sizeAtEndpoint(level, isSp, c) {
+      return isSp ? effectiveSpMin(level, c) : fluidMax(level, c);
+    }
+
+    function closestIntegerLevel(targetPx, isSp, c) {
+      let bestLevel = null;
+      let bestDiff = Infinity;
+      const lo = state.levelMin - 6;
+      const hi = state.levelMax + 6;
+      for (let l = lo; l <= hi; l++) {
+        const size = sizeAtEndpoint(l, isSp, c);
+        const diff = Math.abs(size - targetPx);
+        if (diff < bestDiff) {
+          bestDiff = diff;
+          bestLevel = l;
         }
       }
+      return {
+        level: bestLevel,
+        size: sizeAtEndpoint(bestLevel, isSp, c),
+        diff: bestDiff,
+      };
+    }
 
-      const candidates = [];
-      for (let l = 2; l <= 4; l++) {
-        const neededBase = target / Math.pow(c.fontRatioMin, l);
-        candidates.push({ level: l, base: fmt(neededBase, 2) });
-      }
+    function neighborLevels(centerLevel) {
+      return [centerLevel - 1, centerLevel, centerLevel + 1];
+    }
 
-      return { spLevel, pcLevel, closestLevel, closestDiff, candidates, target };
+    function renderNeighborTable(targetPx, isSp, c) {
+      const vw = isSp ? c.fontWidthMin : c.fontWidthMax;
+      const closest = closestIntegerLevel(targetPx, isSp, c);
+      const rows = neighborLevels(closest.level).map(level => {
+        const size = sizeAtEndpoint(level, isSp, c);
+        const diff = size - targetPx;
+        const diffStr = (diff >= 0 ? '+' : '') + fmt(diff, 2) + 'px';
+        const isCenter = level === closest.level;
+        const posLabel = level < closest.level ? t('rowPrev') : level > closest.level ? t('rowNext') : t('badgeClosest');
+        return `<tr class="${isCenter ? 'highlight-row' : ''}">
+          <td>${level}</td>
+          <td>${getLabel(level)}</td>
+          <td>${fmtPx(size)}</td>
+          <td>${diffStr}</td>
+          <td>${isCenter ? `<span class="badge badge-ok">${t('badgeClosest')}</span>` : posLabel}</td>
+        </tr>`;
+      }).join('');
+
+      const blockTitle = isSp
+        ? t('practicalSpBlock', { vw, level: closest.level, size: fmtPx(closest.size), diff: fmt(closest.diff, 2) })
+        : t('practicalPcBlock', { vw, level: closest.level, size: fmtPx(closest.size), diff: fmt(closest.diff, 2) });
+
+      return `
+        <h4 style="margin:0.75rem 0 0.35rem;font-size:0.8125rem;color:var(--text-muted)">${blockTitle}</h4>
+        <table>
+          <thead><tr>
+            <th>${t('colLevel')}</th><th>${t('colUsage')}</th>
+            <th>${isSp ? t('colSp') : t('colPc')}</th><th>${t('colDiff')}</th><th></th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    function renderTargetBlock(targetPx, c) {
+      if (!targetPx || targetPx <= 0) return '';
+      return `
+        <div class="practical-target-block" style="margin-top:1rem">
+          <h3 style="margin:0 0 0.5rem">${t('practicalTargetHeading', { px: targetPx })}</h3>
+          ${renderNeighborTable(targetPx, true, c)}
+          ${renderNeighborTable(targetPx, false, c)}
+        </div>`;
     }
 
     // --- CSS export ---
@@ -574,7 +642,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
     function renderScaleTable(c) {
       const levels = levelsRange();
-      const check = practicalCheck(c);
+      const targets = getPracticalTargets();
       const vw = state.previewViewport;
 
       let rows = '';
@@ -599,10 +667,11 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         let notes = `<span class="badge ${wcag.body.badge}">${wcag.body.label}</span>`;
         if (wcag.largeSp.badge) notes += ` <span class="badge ${wcag.largeSp.badge}">${wcag.largeSp.label}</span>`;
         if (isFloored(level, c)) notes += ` <span class="badge badge-warn">${t('badgeFloor')}</span>`;
-        if (level === check.closestLevel) {
-          rowClass = 'highlight-row';
-          notes += ` <span class="badge badge-ok">${t('badgeTarget', { px: state.targetBodyPx })}</span>`;
-        }
+        targets.forEach(px => {
+          if (closestIntegerLevel(px, true, c).level === level || closestIntegerLevel(px, false, c).level === level) {
+            notes += ` <span class="badge badge-ok">${t('badgeTarget', { px })}</span>`;
+          }
+        });
         if (sp < WCAG.absoluteMin) rowClass = 'danger-row';
         else if (sp < WCAG.captionMin) rowClass = rowClass || 'warn-row';
 
@@ -751,48 +820,14 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
     }
 
     function renderPractical(c) {
-      const check = practicalCheck(c);
-      const spStr = check.spLevel != null
-        ? `Lv ${fmt(check.spLevel, 3)} ${t('intLevel', { n: Math.round(check.spLevel) })}`
-        : '—';
-      const pcStr = check.pcLevel != null ? `Lv ${fmt(check.pcLevel, 3)}` : '—';
-
-      const candidateRows = check.candidates.map(({ level, base }) => {
-        const verify = fmt(base * Math.pow(c.fontRatioMin, level), 2);
-        return `<tr><td>Lv ${level}</td><td>--font-size-min ≈ ${base}px</td><td>${base} × ${c.fontRatioMin}^${level} = ${verify}px</td></tr>`;
-      }).join('');
-
       const level0sp = effectiveSpMin(0, c);
-      const note = level0sp === check.target
-        ? t('practicalLv0Match')
-        : t('practicalLv0Note', { size: fmtPx(level0sp), target: check.target, level: fmt(check.spLevel, 2) });
+      const targets = getPracticalTargets();
+      const targetBlocks = targets.map(px => renderTargetBlock(px, c)).join('');
 
       return `<div class="card">
         <h2>${t('practicalTitle')}</h2>
-        <p class="compare-note">${note}</p>
-        <div class="check-grid">
-          <div class="check-item">
-            <strong>${t('practicalSpLevel', { px: check.target })}</strong>
-            ${spStr}
-          </div>
-          <div class="check-item">
-            <strong>${t('practicalPcLevel', { px: check.target })}</strong>
-            ${pcStr}
-          </div>
-          <div class="check-item">
-            <strong>${t('practicalClosest', { px: check.target })}</strong>
-            Lv ${check.closestLevel}（${fmtPx(effectiveSpMin(check.closestLevel, c))}、Δ ${fmt(check.closestDiff, 2)}px）
-          </div>
-          <div class="check-item">
-            <strong>${t('practicalLv0Sp')}</strong>
-            ${fmtPx(level0sp)} — ${t('practicalLv0Hint')}
-          </div>
-        </div>
-        <h3 style="margin-top:1rem">${t('practicalCandidates', { px: check.target })}</h3>
-        <table>
-          <thead><tr><th>${t('colLevelShort')}</th><th>${t('colNeededBase')}</th><th>${t('colVerify')}</th></tr></thead>
-          <tbody>${candidateRows}</tbody>
-        </table>
+        <p class="compare-note">${t('practicalIntro')} ${t('practicalLv0Note', { size: fmtPx(level0sp) })} ${t('practicalLv0Hint')}</p>
+        ${targetBlocks || `<p class="compare-note">${t('practicalIntro')}</p>`}
       </div>`;
     }
 
