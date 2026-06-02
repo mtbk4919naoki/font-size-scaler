@@ -4,8 +4,8 @@
 const DEFAULTS = {
   fontSizeMin: 15,
   fontSizeMax: 16,
-  fontRatioMin: 1.15,
-  fontRatioMax: 1.3,
+  fontRatioMin: 1.2,
+  fontRatioMax: 1.3333,
   fontWidthMin: 360,
   fontWidthMax: 1440,
   fontSizeFloor: 8,
@@ -49,7 +49,15 @@ const c = DEFAULTS;
 const viewports = [c.fontWidthMin, 768, c.fontWidthMax];
 let failures = 0;
 
-for (let level = -3; level <= 9; level++) {
+const FRACTIONAL_LEVELS = [-0.5, 0.5];
+const TEST_LEVELS = (() => {
+  const arr = [];
+  for (let level = -3; level <= 9; level++) arr.push(level);
+  for (const f of FRACTIONAL_LEVELS) arr.push(f);
+  return arr.sort((a, b) => a - b);
+})();
+
+for (const level of TEST_LEVELS) {
   for (const vw of viewports) {
     const a = sizeAtViewport(level, vw, c);
     const b = sizeFromCssFormula(level, vw, c);
@@ -64,7 +72,7 @@ if (failures) {
   process.exit(1);
 }
 
-console.log('OK — formula consistent for Lv -3..9 @', viewports.join(', '));
+console.log('OK — formula consistent for', TEST_LEVELS.length, 'levels @', viewports.join(', '));
 console.log('Sample Lv0:', {
   SP: sizeAtViewport(0, c.fontWidthMin, c),
   PC: sizeAtViewport(0, c.fontWidthMax, c),
@@ -79,7 +87,7 @@ function effectivePcMax(level, c) {
   return sizeAtViewport(level, c.fontWidthMax, c);
 }
 
-for (let level = -3; level <= 9; level++) {
+for (const level of TEST_LEVELS) {
   const sp = effectiveSpMin(level, c);
   const pc = effectivePcMax(level, c);
   const rawMin = fluidMin(level, c);

@@ -87,7 +87,7 @@ node scripts/verify-security.mjs  # URL/localStorage サニタイズの回帰チ
 | 項目 | 値 |
 |------|-----|
 | SP / PC 基底 | 15px / 16px |
-| SP / PC スケール比 | 1.15 / 1.3 |
+| SP / PC スケール比 | 1.2 / 1.3333 |
 | ビューポート | 360px 〜 1440px |
 | 絶対下限 | 8px |
 | 表示レベル | -3 〜 9 |

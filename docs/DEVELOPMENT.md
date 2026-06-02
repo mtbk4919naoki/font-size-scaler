@@ -76,7 +76,7 @@ Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 ### localStorage
 
 - キー: `font-size-scaler-v1`
-- 保存内容: `DEFAULTS` 全項目 + `previewViewport` + `labels` + `cssTab` + `lang` + `googleFont` + `previewTab`
+- 保存内容: `DEFAULTS` 全項目 + `previewViewport` + `labels` + `cssTab` + `lang` + `googleFont` + `previewTab`（`fractionalLevels` 含む）
 - 「ブラウザに保存」ボタンで明示保存
 
 ### URL パラメータ
@@ -87,15 +87,16 @@ Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 | -------- | ---------- | -- |
 | `sm` | `fontSizeMin` | 15 |
 | `sx` | `fontSizeMax` | 16 |
-| `rm` | `fontRatioMin` | 1.15 |
-| `rx` | `fontRatioMax` | 1.3 |
+| `rm` | `fontRatioMin` | 1.2 |
+| `rx` | `fontRatioMax` | 1.3333 |
 | `wm` | `fontWidthMin` | 360 |
 | `wx` | `fontWidthMax` | 1440 |
 | `fl` | `fontSizeFloor` | 8 |
 | `rb` | `remBase` | 16 |
 | `vu` | `variableUnit` | 100vi |
-| `lmi` | `levelMin` | -3 |
-| `lmx` | `levelMax` | 9 |
+| `lmi` | `levelMin` | -2 |
+| `lmx` | `levelMax` | 7 |
+| `hlf` | `fractionalLevels` | 1（0.5 刻み on） |
 | `vw` | `previewViewport` | 768 |
 | `sp1` | `targetSp1` | 10 |
 | `sp2` | `targetSp2` | 18 |
@@ -161,10 +162,10 @@ node scripts/verify-formula.mjs
 | 変数 | 初期値 |
 | ---- | ------ |
 | SP / PC 基底 | 15px / 16px |
-| SP / PC スケール比 | 1.15 / 1.3 |
+| SP / PC スケール比 | 1.2 / 1.3333 |
 | ビューポート | 360px 〜 1440px |
 | 絶対下限 | 8px |
-| 表示レベル | -3 〜 9 |
+| 表示レベル | -2 〜 7（0.5 刻み on: -0.5/0.5 · off: -3 〜 8、small/lead は -1/1） |
 | 目標サイズ SP 1 / 2 / 3 | 10px / 18px / 24px |
 | 目標サイズ PC 1 / 2 / 3 | 10px / 21px / 36px |
 | プレビュー vw | 768px |

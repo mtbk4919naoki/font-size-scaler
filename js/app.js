@@ -17,6 +17,8 @@
         remBase: 'rem 換算基準 (px)', variableUnit: '--variable-unit',
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: '表示レベル min', levelMax: '表示レベル max',
+        fractionalLevels: '0.5 刻み（small / lead）',
+        tipFractionalLevels: 'オフで整数のみ。small/lead は Lv -1/1、micro/caption は -3/-2、h4 以降は Lv 2 から。',
         secTargetSize: '目標サイズ',
         targetSp1: 'SP 1 (px)', targetSp2: 'SP 2 (px)', targetSp3: 'SP 3 (px)',
         targetPc1: 'PC 1 (px)', targetPc2: 'PC 2 (px)', targetPc3: 'PC 3 (px)',
@@ -122,6 +124,8 @@
         remBase: 'rem base (px)', variableUnit: '--variable-unit',
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: 'Display level min', levelMax: 'Display level max',
+        fractionalLevels: 'Half-step levels (small / lead)',
+        tipFractionalLevels: 'Off = integer only. small/lead at -1/1; micro/caption at -3/-2; h4+ from Lv 2.',
         secTargetSize: 'Target sizes',
         targetSp1: 'SP 1 (px)', targetSp2: 'SP 2 (px)', targetSp3: 'SP 3 (px)',
         targetPc1: 'PC 1 (px)', targetPc2: 'PC 2 (px)', targetPc3: 'PC 3 (px)',
@@ -316,15 +320,16 @@
     const DEFAULTS = {
       fontSizeMin: 15,
       fontSizeMax: 16,
-      fontRatioMin: 1.15,
-      fontRatioMax: 1.3,
+      fontRatioMin: 1.2,
+      fontRatioMax: 1.3333,
       fontWidthMin: 360,
       fontWidthMax: 1440,
       fontSizeFloor: 8,
       remBase: 16,
       variableUnit: '100vi',
-      levelMin: -3,
-      levelMax: 9,
+      levelMin: -2,
+      levelMax: 7,
+      fractionalLevels: true,
       targetSp1: 10,
       targetSp2: 18,
       targetSp3: 24,
@@ -356,6 +361,72 @@
     const MAX_LEVEL_SPAN = 24;
     const LEVEL_KEY_MIN = -6;
     const LEVEL_KEY_MAX = 12;
+    const FRACTIONAL_LEVELS = [-0.5, 0.5];
+
+    function parseLevelKey(key) {
+      const level = parseFloat(key);
+      return Number.isFinite(level) ? level : null;
+    }
+
+    function normalizeFractionalLevels(value) {
+      if (value === false || value === 0 || value === '0') return false;
+      return true;
+    }
+
+    function effectiveLevelBounds() {
+      if (state.fractionalLevels) {
+        return { min: state.levelMin, max: state.levelMax };
+      }
+      return {
+        min: Math.max(LEVEL_KEY_MIN, state.levelMin - 1),
+        max: Math.min(LEVEL_KEY_MAX, state.levelMax + 1),
+      };
+    }
+
+    function isAllowedLevel(level, lo, hi) {
+      if (level < lo || level > hi) return false;
+      if (!state.fractionalLevels) return Number.isInteger(level);
+      if (Number.isInteger(level)) return true;
+      return FRACTIONAL_LEVELS.includes(level);
+    }
+
+    function levelsInSpan(min, max) {
+      const lo = Math.min(min, max);
+      const hi = Math.max(min, max);
+      const arr = [];
+      for (let i = Math.ceil(lo); i <= Math.floor(hi); i++) arr.push(i);
+      if (state.fractionalLevels) {
+        for (const f of FRACTIONAL_LEVELS) {
+          if (f >= lo && f <= hi) arr.push(f);
+        }
+      }
+      return arr.sort((a, b) => a - b);
+    }
+
+    function displayLevelsInSpan(min, max) {
+      return levelsInSpan(min, max);
+    }
+
+    /** Map fractional-mode preview level → scale level when 0.5 steps are off. */
+    function compactScaleLevel(level) {
+      if (state.fractionalLevels) return level;
+      if (level === -0.5) return -1;
+      if (level === 0.5) return 1;
+      if (Number.isInteger(level) && level <= -1) return level - 1;
+      if (Number.isInteger(level) && level >= 1) return level + 1;
+      return level;
+    }
+
+    function resolvePreviewLevel(level) {
+      return compactScaleLevel(level);
+    }
+
+    function purgeFractionalLabels() {
+      for (const f of FRACTIONAL_LEVELS) {
+        delete state.labels[f];
+        delete state.labels[String(f)];
+      }
+    }
 
     const FIELD_BOUNDS = {
       fontSizeMin: { min: 8, max: 48 },
@@ -468,8 +539,8 @@
       const hi = Math.min(LEVEL_KEY_MAX, levelMax + 6);
       for (const key of Object.keys(raw)) {
         if (key === '__proto__' || key === 'constructor' || key === 'prototype') continue;
-        const level = parseInt(key, 10);
-        if (!Number.isInteger(level) || level < lo || level > hi) continue;
+        const level = parseLevelKey(key);
+        if (level == null || !isAllowedLevel(level, lo, hi)) continue;
         const label = sanitizeLabelString(raw[key]);
         if (label) labels[level] = label;
       }
@@ -491,6 +562,10 @@
       state.cssTab = normalizeCssTab(state.cssTab);
       state.previewTab = normalizePreviewTab(state.previewTab);
       state.googleFont = normalizeGoogleFont(state.googleFont);
+      state.fractionalLevels = normalizeFractionalLevels(
+        state.fractionalLevels ?? DEFAULTS.fractionalLevels,
+      );
+      if (!state.fractionalLevels) purgeFractionalLabels();
       state.labels = sanitizeLabels(state.labels, state.levelMin, state.levelMax);
     }
 
@@ -537,6 +612,9 @@
           out[newKey] = clampFiniteNumber(data[oldKey], 6, 72, DEFAULTS[newKey]);
         }
       });
+      if (data.fractionalLevels != null) {
+        out.fractionalLevels = normalizeFractionalLevels(data.fractionalLevels);
+      }
       return out;
     }
 
@@ -590,6 +668,7 @@
         .map(([k, v]) => `${k}:${encodeURIComponent(v)}`)
         .join(',');
       if (lb) p.set('lb', lb);
+      if (!state.fractionalLevels) p.set('hlf', '0');
       return p;
     }
 
@@ -605,6 +684,7 @@
         else if (STRING_STATE_KEYS.has(key)) data[key] = v;
         else data[key] = parseFloat(v);
       });
+      if (p.has('hlf')) data.fractionalLevels = p.get('hlf') !== '0';
       if (p.has('lb')) {
         const lbRaw = p.get('lb');
         if (lbRaw && lbRaw.length <= MAX_LB_PARAM_LEN) {
@@ -613,8 +693,8 @@
             if (!pair) return;
             const i = pair.indexOf(':');
             if (i <= 0) return;
-            const level = parseInt(pair.slice(0, i), 10);
-            if (!Number.isInteger(level)) return;
+            const level = parseLevelKey(pair.slice(0, i));
+            if (level == null || !isAllowedLevel(level, LEVEL_KEY_MIN, LEVEL_KEY_MAX)) return;
             let label;
             try {
               label = decodeURIComponent(pair.slice(i + 1));
@@ -779,10 +859,18 @@
     }
 
     function defaultLabel(level) {
+      if (state.fractionalLevels) {
+        const map = {
+          '-2': 'micro', '-1': 'caption', '-0.5': 'small', 0: 'body', 0.5: 'lead',
+          1: 'h4', 2: 'h3', 3: 'h2', 4: 'h1',
+          5: 'display', 6: 'hero', 7: 'mega',
+        };
+        return map[String(level)] ?? `level-${level}`;
+      }
       const map = {
-        '-3': 'micro', '-2': 'caption', '-1': 'small', 0: 'body',
-        1: 'lead', 2: 'h4', 3: 'h3', 4: 'h2', 5: 'h1',
-        6: 'display', 7: 'hero', 8: 'mega', 9: 'jumbo',
+        '-3': 'micro', '-2': 'caption', '-1': 'small', 0: 'body', 1: 'lead',
+        2: 'h4', 3: 'h3', 4: 'h2', 5: 'h1',
+        6: 'display', 7: 'hero', 8: 'mega',
       };
       return map[String(level)] ?? `level-${level}`;
     }
@@ -825,15 +913,14 @@
     }
 
     function levelsRange() {
-      const lo = Math.max(LEVEL_KEY_MIN, Math.min(10, state.levelMin));
-      const hi = Math.min(LEVEL_KEY_MAX, Math.max(-6, state.levelMax));
-      const min = Math.min(lo, hi);
-      const max = Math.max(lo, hi);
+      const { min: lo, max: hi } = effectiveLevelBounds();
+      const boundLo = Math.max(LEVEL_KEY_MIN, Math.min(10, lo));
+      const boundHi = Math.min(LEVEL_KEY_MAX, Math.max(-6, hi));
+      const min = Math.min(boundLo, boundHi);
+      const max = Math.max(boundLo, boundHi);
       const span = max - min;
       const cappedMax = span > MAX_LEVEL_SPAN ? min + MAX_LEVEL_SPAN : max;
-      const arr = [];
-      for (let i = min; i <= cappedMax; i++) arr.push(i);
-      return arr;
+      return displayLevelsInSpan(min, cappedMax);
     }
 
     function previewFontSizePx(level, c, vw) {
@@ -863,6 +950,7 @@
           ICONS,
           previewTextStyle,
           previewFontFamilyStyle,
+          resolvePreviewLevel,
         });
       }
       return previewUI;
@@ -953,6 +1041,12 @@
             <label for="levelMax">${t('levelMax')}</label>
             <input type="number" id="levelMax" value="${state.levelMax}" min="-6" max="12" step="1">
           </div>
+        </div>
+        <div class="field field-checkbox">
+          <label class="checkbox-label" for="fractionalLevels" title="${escapeAttr(t('tipFractionalLevels'))}">
+            <input type="checkbox" id="fractionalLevels"${state.fractionalLevels ? ' checked' : ''}>
+            ${t('fractionalLevels')}
+          </label>
         </div>
         <div class="section-title">${t('secTargetSize')}</div>
         <div class="field-row field-row-3">
@@ -1053,6 +1147,7 @@
       state.variableUnit = document.getElementById('variableUnit').value;
       state.levelMin = int('levelMin');
       state.levelMax = int('levelMax');
+      state.fractionalLevels = document.getElementById('fractionalLevels')?.checked ?? true;
       state.targetSp1 = num('targetSp1');
       state.targetSp2 = num('targetSp2');
       state.targetSp3 = num('targetSp3');
@@ -1081,12 +1176,13 @@
       return isSp ? effectiveSpMin(level, c) : effectivePcMax(level, c);
     }
 
-    function closestIntegerLevel(targetPx, isSp, c) {
+    function closestDisplayLevel(targetPx, isSp, c) {
       let bestLevel = null;
       let bestDiff = Infinity;
-      const lo = state.levelMin - 6;
-      const hi = state.levelMax + 6;
-      for (let l = lo; l <= hi; l++) {
+      const { min, max } = effectiveLevelBounds();
+      const lo = Math.max(LEVEL_KEY_MIN, min - 6);
+      const hi = Math.min(LEVEL_KEY_MAX, max + 6);
+      for (const l of displayLevelsInSpan(lo, hi)) {
         const size = sizeAtEndpoint(l, isSp, c);
         const diff = Math.abs(size - targetPx);
         if (diff < bestDiff) {
@@ -1110,7 +1206,7 @@
     function renderTargetCell(level, checks, c) {
       const badges = checks
         .map(ch => {
-          const closest = closestIntegerLevel(ch.px, ch.isSp, c);
+          const closest = closestDisplayLevel(ch.px, ch.isSp, c);
           if (closest.level !== level) return '';
           return `<span class="badge ${ch.badgeClass}">${ch.label}${formatTargetDiffPx(closest.size, ch.px)}</span>`;
         })
@@ -1653,7 +1749,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
       });
 
       document.querySelectorAll('.preview-block[data-preview-level]').forEach(el => {
-        const level = parseInt(el.dataset.previewLevel, 10);
+        const level = parseLevelKey(el.dataset.previewLevel);
+        if (level == null) return;
         const px = sizeAtViewport(level, state.previewViewport, c);
         el.querySelector('.preview-px').textContent = fmtPx(px);
         el.querySelector('.preview-vw').textContent = state.previewViewport;
@@ -1661,7 +1758,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
       });
 
       document.querySelectorAll('.preview-scale-text[data-preview-level]').forEach(el => {
-        const level = parseInt(el.dataset.previewLevel, 10);
+        const level = parseLevelKey(el.dataset.previewLevel);
+        if (level == null) return;
         el.style.fontSize = sizeAtViewport(level, state.previewViewport, c) + 'px';
       });
     }
@@ -1732,7 +1830,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
 
       main.querySelectorAll('.label-input').forEach(input => {
         input.addEventListener('change', () => {
-          const level = parseInt(input.dataset.level, 10);
+          const level = parseLevelKey(input.dataset.level);
+          if (level == null) return;
           const label = sanitizeLabelString(input.value.trim());
           state.labels[level] = label || defaultLabel(level);
           clampStateFields();
