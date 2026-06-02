@@ -17,15 +17,16 @@
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: '表示レベル min', levelMax: '表示レベル max',
         secPractical: '実用チェック',
-        practicalTarget1: '目標サイズ A (px)',
-        practicalTarget2: '目標サイズ B (px)',
-        practicalIntro: '各目標 px について、SP / PC それぞれで最も近い整数レベルとその前後 1 段階を表示します。',
-        practicalTargetHeading: '目標 {px}px',
-        practicalSpBlock: 'SP（{vw}px 時）— 最接近 Lv {level}（{size}、Δ {diff}px）',
-        practicalPcBlock: 'PC（{vw}px 時）— 最接近 Lv {level}（{size}、Δ {diff}px）',
-        colDiff: '差分',
+        practicalSpA: 'SP A (px)', practicalSpB: 'SP B (px)',
+        practicalPcA: 'PC A (px)', practicalPcB: 'PC B (px)',
+        practicalIntro: '各目標 px で SP / PC 端それぞれの最接近レベルと前後 1 段階を表示。',
+        colCheck: 'チェック', colBelow: '1つ下', colNearest: '最接近', colAbove: '1つ上',
+        btnSave: 'ブラウザに保存', btnShare: '共有URLをコピー', btnReset: '初期状態に戻す',
+        saved: '保存しました', shared: 'URL をコピーしました', resetDone: '初期状態に戻しました',
+        classCopied: 'コピーしました',
+        colCss: 'CSS',
+        tipColCss: '用途ラベルから生成したクラス名（text-*）をクリップボードにコピー。',
         badgeClosest: '最接近',
-        rowPrev: '1つ下', rowNext: '1つ上',
         scaleTable: 'スケール表',
         scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — ジャンプ率は SP {spJump} / PC {pcJump} で一定（下限適用時のみ SP が変動）。絶対下限 {floor}px 未満はクランプ。',
         colLevel: 'レベル', colUsage: '用途', colSp: '(SP)', colPc: '(PC)',
@@ -73,15 +74,16 @@
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: 'Display level min', levelMax: 'Display level max',
         secPractical: 'Practical check',
-        practicalTarget1: 'Target size A (px)',
-        practicalTarget2: 'Target size B (px)',
-        practicalIntro: 'For each target px, shows the nearest integer level on SP / PC and one step above and below.',
-        practicalTargetHeading: 'Target {px}px',
-        practicalSpBlock: 'SP ({vw}px) — nearest Lv {level} ({size}, Δ {diff}px)',
-        practicalPcBlock: 'PC ({vw}px) — nearest Lv {level} ({size}, Δ {diff}px)',
-        colDiff: 'Diff',
+        practicalSpA: 'SP A (px)', practicalSpB: 'SP B (px)',
+        practicalPcA: 'PC A (px)', practicalPcB: 'PC B (px)',
+        practicalIntro: 'Nearest integer level ±1 step at each SP / PC endpoint.',
+        colCheck: 'Check', colBelow: 'Below', colNearest: 'Nearest', colAbove: 'Above',
+        btnSave: 'Save to browser', btnShare: 'Copy share URL', btnReset: 'Reset to defaults',
+        saved: 'Saved', shared: 'URL copied', resetDone: 'Reset to defaults',
+        classCopied: 'Copied',
+        colCss: 'CSS',
+        tipColCss: 'Copy the utility class name (text-*) from the usage label.',
         badgeClosest: 'nearest',
-        rowPrev: 'below', rowNext: 'above',
         scaleTable: 'Scale table',
         scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — jump rate is constant at SP {spJump} / PC {pcJump} (SP varies when floor applies). Values below {floor}px are clamped.',
         colLevel: 'Level', colUsage: 'Usage', colSp: '(SP)', colPc: '(PC)',
@@ -132,6 +134,13 @@
       return `<span class="th-inner">${label}<span class="tip-icon" data-tip="${escapeAttr(tip)}" tabindex="0" role="note">ⓘ</span></span>`;
     }
 
+    const ICONS = {
+      save: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M13 14H3V2h7l1 1v1h2v10zM5 3v2h5V3H5zm0 9h6v2H5v-2z"/></svg>',
+      share: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M6 9l4-2M6 7l4 2M3 6.5h2M11 9.5h2"/></svg>',
+      copy: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M4 1h9v9H4V1zm1 1v7h7V2H5zm-2 3h1v9h9v1H3V4z"/></svg>',
+      reset: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 0 1 9.3-4M13.5 8a5.5 5.5 0 0 1-9.3 4"/><path d="M11 2.5h2v2M5 13.5H3v-2"/></svg>',
+    };
+
     const RATIO_PRESETS = [
       { value: 1.067, ja: '短二度', en: 'Minor 2nd' },
       { value: 1.125, ja: '長二度', en: 'Major 2nd' },
@@ -165,10 +174,142 @@
       variableUnit: '100vi',
       levelMin: -3,
       levelMax: 9,
-      practicalTarget1: 16,
-      practicalTarget2: 12,
+      practicalSpA: 10,
+      practicalSpB: 18,
+      practicalPcA: 12,
+      practicalPcB: 21,
       previewViewport: 768,
     };
+
+    const STORAGE_KEY = 'font-size-scaler-v1';
+    const PARAM_MAP = {
+      sm: 'fontSizeMin', sx: 'fontSizeMax', rm: 'fontRatioMin', rx: 'fontRatioMax',
+      wm: 'fontWidthMin', wx: 'fontWidthMax', fl: 'fontSizeFloor', rb: 'remBase',
+      vu: 'variableUnit', lmi: 'levelMin', lmx: 'levelMax', vw: 'previewViewport',
+      spa: 'practicalSpA', spb: 'practicalSpB', pca: 'practicalPcA', pcb: 'practicalPcB',
+      lng: 'lang', tab: 'cssTab',
+    };
+    const INT_STATE_KEYS = new Set(['fontWidthMin', 'fontWidthMax', 'remBase', 'levelMin', 'levelMax', 'previewViewport']);
+
+    function serializeState() {
+      return {
+        ...Object.fromEntries(Object.keys(DEFAULTS).map(k => [k, state[k]])),
+        previewViewport: state.previewViewport,
+        labels: { ...state.labels },
+        cssTab: state.cssTab,
+        lang: state.lang,
+      };
+    }
+
+    function applyState(data) {
+      if (!data || typeof data !== 'object') return;
+      Object.keys(DEFAULTS).forEach(k => {
+        if (data[k] == null) return;
+        state[k] = INT_STATE_KEYS.has(k) ? parseInt(data[k], 10) : parseFloat(data[k]);
+      });
+      if (data.previewViewport != null) state.previewViewport = parseInt(data.previewViewport, 10);
+      if (data.labels && typeof data.labels === 'object') state.labels = { ...data.labels };
+      if (data.cssTab) state.cssTab = data.cssTab;
+      if (data.lang) state.lang = data.lang;
+      if (data.practicalTarget1 != null && data.practicalSpA == null) state.practicalSpA = parseFloat(data.practicalTarget1);
+      if (data.practicalTarget2 != null && data.practicalPcA == null) state.practicalPcA = parseFloat(data.practicalTarget2);
+      if (data.variableUnit) state.variableUnit = data.variableUnit;
+    }
+
+    function saveToStorage() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(serializeState())); } catch (_) {}
+    }
+
+    function loadFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) applyState(JSON.parse(raw));
+      } catch (_) {}
+    }
+
+    function stateToParams() {
+      const p = new URLSearchParams();
+      Object.entries(PARAM_MAP).forEach(([short, key]) => {
+        if (state[key] != null && state[key] !== '') p.set(short, state[key]);
+      });
+      const lb = Object.entries(state.labels)
+        .filter(([, v]) => v)
+        .map(([k, v]) => `${k}:${encodeURIComponent(v)}`)
+        .join(',');
+      if (lb) p.set('lb', lb);
+      return p;
+    }
+
+    function loadFromUrl() {
+      const p = new URLSearchParams(location.search);
+      if (!p.toString()) return;
+      const data = {};
+      Object.entries(PARAM_MAP).forEach(([short, key]) => {
+        if (!p.has(short)) return;
+        const v = p.get(short);
+        data[key] = INT_STATE_KEYS.has(key) ? parseInt(v, 10) : (key === 'lang' || key === 'cssTab' || key === 'variableUnit' ? v : parseFloat(v));
+      });
+      if (p.has('lb')) {
+        data.labels = {};
+        p.get('lb').split(',').forEach(pair => {
+          const i = pair.indexOf(':');
+          if (i > 0) data.labels[parseInt(pair.slice(0, i), 10)] = decodeURIComponent(pair.slice(i + 1));
+        });
+      }
+      applyState(data);
+    }
+
+    function buildShareUrl() {
+      return `${location.origin}${location.pathname}?${stateToParams()}`;
+    }
+
+    function showControlToast(msg) {
+      const el = document.getElementById('controlToast');
+      if (!el) return;
+      el.textContent = msg;
+      setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 2000);
+    }
+
+    function showScaleToast(msg) {
+      const el = document.getElementById('scaleToast');
+      if (!el) return;
+      el.textContent = msg;
+      setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 2000);
+    }
+
+    function cssClassName(level) {
+      return `text-${getLabel(level)}`;
+    }
+
+    function resetToDefaults() {
+      const lang = state.lang;
+      Object.assign(state, { ...DEFAULTS, labels: {}, cssTab: 'vanilla', lang });
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+      history.replaceState(null, '', location.pathname);
+      buildControls();
+      render();
+      showControlToast(t('resetDone'));
+    }
+
+    function bindControlActions() {
+      const el = document.getElementById('controls');
+      if (!el || el.dataset.actionsBound) return;
+      el.dataset.actionsBound = '1';
+      el.addEventListener('click', e => {
+        if (e.target.closest('#btnSave')) {
+          readControls();
+          saveToStorage();
+          showControlToast(t('saved'));
+        }
+        if (e.target.closest('#btnShare')) {
+          readControls();
+          navigator.clipboard.writeText(buildShareUrl()).then(() => showControlToast(t('shared')));
+        }
+        if (e.target.closest('#btnReset')) {
+          resetToDefaults();
+        }
+      });
+    }
 
     const state = {
       ...DEFAULTS,
@@ -301,6 +442,13 @@
     function buildControls() {
       const el = document.getElementById('controls');
       el.innerHTML = `
+        <div class="sidebar-actions">
+          <button type="button" id="btnSave" class="action-btn">${ICONS.save}<span>${t('btnSave')}</span></button>
+          <button type="button" id="btnShare" class="action-btn">${ICONS.share}<span>${t('btnShare')}</span></button>
+          <button type="button" id="btnReset" class="action-btn action-btn-muted">${ICONS.reset}<span>${t('btnReset')}</span></button>
+        </div>
+        <div id="controlToast" class="toast"></div>
+
         <div class="section-title">${t('secBaseSize')}</div>
         <div class="field-row">
           <div class="field">
@@ -370,12 +518,22 @@
         <div class="section-title">${t('secPractical')}</div>
         <div class="field-row">
           <div class="field">
-            <label for="practicalTarget1">${t('practicalTarget1')}</label>
-            <input type="number" id="practicalTarget1" value="${state.practicalTarget1}" min="6" max="72" step="0.5">
+            <label for="practicalSpA">${t('practicalSpA')}</label>
+            <input type="number" id="practicalSpA" value="${state.practicalSpA}" min="6" max="72" step="0.5">
           </div>
           <div class="field">
-            <label for="practicalTarget2">${t('practicalTarget2')}</label>
-            <input type="number" id="practicalTarget2" value="${state.practicalTarget2}" min="6" max="72" step="0.5">
+            <label for="practicalSpB">${t('practicalSpB')}</label>
+            <input type="number" id="practicalSpB" value="${state.practicalSpB}" min="6" max="72" step="0.5">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="practicalPcA">${t('practicalPcA')}</label>
+            <input type="number" id="practicalPcA" value="${state.practicalPcA}" min="6" max="72" step="0.5">
+          </div>
+          <div class="field">
+            <label for="practicalPcB">${t('practicalPcB')}</label>
+            <input type="number" id="practicalPcB" value="${state.practicalPcB}" min="6" max="72" step="0.5">
           </div>
         </div>
       `;
@@ -444,15 +602,22 @@
       state.variableUnit = document.getElementById('variableUnit').value;
       state.levelMin = int('levelMin');
       state.levelMax = int('levelMax');
-      state.practicalTarget1 = num('practicalTarget1');
-      state.practicalTarget2 = num('practicalTarget2');
+      state.practicalSpA = num('practicalSpA');
+      state.practicalSpB = num('practicalSpB');
+      state.practicalPcA = num('practicalPcA');
+      state.practicalPcB = num('practicalPcB');
       if (state.levelMin > state.levelMax) {
         [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
       }
     }
 
-    function getPracticalTargets() {
-      return [state.practicalTarget1, state.practicalTarget2].filter(px => px > 0);
+    function getPracticalChecks() {
+      return [
+        { id: 'spa', label: 'SP A', px: state.practicalSpA, isSp: true },
+        { id: 'spb', label: 'SP B', px: state.practicalSpB, isSp: true },
+        { id: 'pca', label: 'PC A', px: state.practicalPcA, isSp: false },
+        { id: 'pcb', label: 'PC B', px: state.practicalPcB, isSp: false },
+      ].filter(ch => ch.px > 0);
     }
 
     function sizeAtEndpoint(level, isSp, c) {
@@ -483,47 +648,31 @@
       return [centerLevel - 1, centerLevel, centerLevel + 1];
     }
 
-    function renderNeighborTable(targetPx, isSp, c) {
-      const vw = isSp ? c.fontWidthMin : c.fontWidthMax;
-      const closest = closestIntegerLevel(targetPx, isSp, c);
-      const rows = neighborLevels(closest.level).map(level => {
-        const size = sizeAtEndpoint(level, isSp, c);
-        const diff = size - targetPx;
-        const diffStr = (diff >= 0 ? '+' : '') + fmt(diff, 2) + 'px';
-        const isCenter = level === closest.level;
-        const posLabel = level < closest.level ? t('rowPrev') : level > closest.level ? t('rowNext') : t('badgeClosest');
-        return `<tr class="${isCenter ? 'highlight-row' : ''}">
-          <td>${level}</td>
-          <td>${getLabel(level)}</td>
-          <td>${fmtPx(size)}</td>
-          <td>${diffStr}</td>
-          <td>${isCenter ? `<span class="badge badge-ok">${t('badgeClosest')}</span>` : posLabel}</td>
-        </tr>`;
-      }).join('');
-
-      const blockTitle = isSp
-        ? t('practicalSpBlock', { vw, level: closest.level, size: fmtPx(closest.size), diff: fmt(closest.diff, 2) })
-        : t('practicalPcBlock', { vw, level: closest.level, size: fmtPx(closest.size), diff: fmt(closest.diff, 2) });
-
-      return `
-        <h4 style="margin:0.75rem 0 0.35rem;font-size:0.8125rem;color:var(--text-muted)">${blockTitle}</h4>
-        <table>
-          <thead><tr>
-            <th>${t('colLevel')}</th><th>${t('colUsage')}</th>
-            <th>${isSp ? t('colSp') : t('colPc')}</th><th>${t('colDiff')}</th><th></th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>`;
+    function formatNeighborCell(level, targetPx, centerLevel, c, isSp) {
+      const size = sizeAtEndpoint(level, isSp, c);
+      const diff = size - targetPx;
+      const diffStr = (diff >= 0 ? '+' : '') + fmt(diff, 1);
+      const isCenter = level === centerLevel;
+      return `<td class="cell-neighbor${isCenter ? ' highlight-cell' : ''}">
+        <strong>Lv ${level}</strong>
+        <span class="cell-muted">${getLabel(level)}</span>
+        ${fmtPx(size)}
+        <span class="cell-muted">${diffStr}</span>
+        ${isCenter ? `<span class="badge badge-ok">${t('badgeClosest')}</span>` : ''}
+      </td>`;
     }
 
-    function renderTargetBlock(targetPx, c) {
-      if (!targetPx || targetPx <= 0) return '';
-      return `
-        <div class="practical-target-block" style="margin-top:1rem">
-          <h3 style="margin:0 0 0.5rem">${t('practicalTargetHeading', { px: targetPx })}</h3>
-          ${renderNeighborTable(targetPx, true, c)}
-          ${renderNeighborTable(targetPx, false, c)}
-        </div>`;
+    function renderPracticalRow(check, c) {
+      const { label, px, isSp } = check;
+      const closest = closestIntegerLevel(px, isSp, c);
+      const levels = neighborLevels(closest.level);
+      const endpoint = isSp ? 'SP' : 'PC';
+      return `<tr>
+        <td><strong>${label}</strong><br><span class="cell-muted">${endpoint} · ${fmtPx(px)}</span></td>
+        ${formatNeighborCell(levels[0], px, closest.level, c, isSp)}
+        ${formatNeighborCell(levels[1], px, closest.level, c, isSp)}
+        ${formatNeighborCell(levels[2], px, closest.level, c, isSp)}
+      </tr>`;
     }
 
     // --- CSS export ---
@@ -642,7 +791,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
     function renderScaleTable(c) {
       const levels = levelsRange();
-      const targets = getPracticalTargets();
+      const checks = getPracticalChecks();
       const vw = state.previewViewport;
 
       let rows = '';
@@ -667,9 +816,9 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         let notes = `<span class="badge ${wcag.body.badge}">${wcag.body.label}</span>`;
         if (wcag.largeSp.badge) notes += ` <span class="badge ${wcag.largeSp.badge}">${wcag.largeSp.label}</span>`;
         if (isFloored(level, c)) notes += ` <span class="badge badge-warn">${t('badgeFloor')}</span>`;
-        targets.forEach(px => {
-          if (closestIntegerLevel(px, true, c).level === level || closestIntegerLevel(px, false, c).level === level) {
-            notes += ` <span class="badge badge-ok">${t('badgeTarget', { px })}</span>`;
+        checks.forEach(({ label, px, isSp }) => {
+          if (closestIntegerLevel(px, isSp, c).level === level) {
+            notes += ` <span class="badge badge-ok">${label} ${t('badgeTarget', { px })}</span>`;
           }
         });
         if (sp < WCAG.absoluteMin) rowClass = 'danger-row';
@@ -684,6 +833,7 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
           <td>${jumpSp}</td>
           <td>${jumpPc}</td>
           <td>${notes}</td>
+          <td><button type="button" class="class-copy-btn" data-class="${cssClassName(level)}" title="${escapeAttr(cssClassName(level))}">${ICONS.copy}<span>CSS</span></button></td>
         </tr>`;
       });
 
@@ -696,10 +846,14 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         thTip(t('colJumpSp'), t('tipJumpSp', { ratio: c.fontRatioMin })),
         thTip(t('colJumpPc'), t('tipJumpPc', { ratio: c.fontRatioMax })),
         thTip(t('colNotes'), t('tipNotes')),
+        thTip(t('colCss'), t('tipColCss')),
       ];
 
       return `<div class="card">
-        <h2>${t('scaleTable')}</h2>
+        <div class="card-head-row">
+          <h2>${t('scaleTable')}</h2>
+          <span id="scaleToast" class="toast scale-toast"></span>
+        </div>
         <p class="compare-note">${t('scaleNote', {
           spJump: fmtRatio(fluidMin(1, c), fluidMin(0, c)),
           pcJump: fmtRatio(fluidMax(1, c), fluidMax(0, c)),
@@ -821,13 +975,21 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
     function renderPractical(c) {
       const level0sp = effectiveSpMin(0, c);
-      const targets = getPracticalTargets();
-      const targetBlocks = targets.map(px => renderTargetBlock(px, c)).join('');
+      const checks = getPracticalChecks();
+      const rows = checks.map(ch => renderPracticalRow(ch, c)).join('');
 
       return `<div class="card">
         <h2>${t('practicalTitle')}</h2>
         <p class="compare-note">${t('practicalIntro')} ${t('practicalLv0Note', { size: fmtPx(level0sp) })} ${t('practicalLv0Hint')}</p>
-        ${targetBlocks || `<p class="compare-note">${t('practicalIntro')}</p>`}
+        <table class="table-compact">
+          <thead><tr>
+            <th>${t('colCheck')}</th>
+            <th>${t('colBelow')}</th>
+            <th>${t('colNearest')}</th>
+            <th>${t('colAbove')}</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
       </div>`;
     }
 
@@ -905,6 +1067,17 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
         });
       });
 
+      main.querySelectorAll('.class-copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const cls = btn.dataset.class;
+          navigator.clipboard.writeText(cls).then(() => {
+            showScaleToast(t('classCopied'));
+            btn.classList.add('copied');
+            setTimeout(() => btn.classList.remove('copied'), 1500);
+          });
+        });
+      });
+
       main.querySelector('[data-copy]')?.addEventListener('click', () => {
         const text = state.cssTab === 'vanilla' ? generateVanillaCSS(c) : generateTailwindCSS(c);
         navigator.clipboard.writeText(text).then(() => {
@@ -915,7 +1088,11 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
       });
     }
 
+    loadFromStorage();
+    loadFromUrl();
+    document.documentElement.lang = state.lang;
     document.getElementById('headerSubtitle').innerHTML = t('headerSubtitle');
     renderLangToggle();
     buildControls();
+    bindControlActions();
     render();
