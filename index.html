@@ -212,12 +212,48 @@
       accent-color: var(--accent);
     }
 
-    .viewport-bar output {
+    .viewport-bar input[type="number"] {
+      width: 4.5rem;
+      padding: 0.3rem 0.4rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
       font-family: var(--mono);
       font-size: 0.8125rem;
-      min-width: 4.5rem;
       text-align: right;
     }
+
+    .viewport-bar input[type="number"]:focus {
+      outline: 2px solid var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .lang-toggle {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 0.35rem;
+    }
+
+    .lang-toggle button {
+      padding: 0.15rem 0.4rem;
+      font-size: 0.625rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .lang-toggle button.active {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .badge-aaa { background: rgba(108, 140, 255, 0.2); color: var(--accent); }
+    .badge-aa { background: rgba(78, 207, 138, 0.15); color: var(--ok); }
+    .badge-fail { background: rgba(240, 96, 96, 0.2); color: var(--danger); }
 
     .preview-block {
       border-left: 3px solid var(--accent-dim);
@@ -350,28 +386,38 @@
   </div>
 
   <script>
-    const RATIO_PRESETS = {
-      'Minor Second': 1.067,
-      'Major Second': 1.125,
-      'Minor Third': 1.2,
-      'Major Third': 1.25,
-      'Perfect Fourth': 1.333,
-      'Augmented Fourth': 1.414,
-      'Perfect Fifth': 1.5,
-      'Golden Ratio': 1.618,
+    const RATIO_PRESETS = [
+      { value: 1.067, ja: '短二度', en: 'Minor 2nd' },
+      { value: 1.125, ja: '長二度', en: 'Major 2nd' },
+      { value: 1.2, ja: '短三度', en: 'Minor 3rd' },
+      { value: 1.25, ja: '長三度', en: 'Major 3rd' },
+      { value: 1.333, ja: '完全四度', en: 'Perfect 4th' },
+      { value: 1.414, ja: '増四度', en: 'Augmented 4th' },
+      { value: 1.5, ja: '完全五度', en: 'Perfect 5th' },
+      { value: 1.618, ja: '黄金比', en: 'Golden Ratio' },
+    ];
+
+    const WCAG = {
+      bodyRecommended: 16,
+      captionMin: 12,
+      absoluteMin: 10,
+      largeTextAA: 24,
+      largeTextAABold: 19,
+      largeTextAAA: 24,
+      largeTextAAABold: 18.67,
     };
 
     const DEFAULTS = {
-      fontSizeMin: 16,
-      fontSizeMax: 20,
+      fontSizeMin: 15,
+      fontSizeMax: 16,
       fontRatioMin: 1.2,
       fontRatioMax: 1.333,
-      fontWidthMin: 320,
+      fontWidthMin: 360,
       fontWidthMax: 1440,
       remBase: 16,
       variableUnit: '100vi',
-      levelMin: -2,
-      levelMax: 8,
+      levelMin: -3,
+      levelMax: 9,
       targetBodyPx: 16,
       previewViewport: 768,
     };
@@ -380,6 +426,7 @@
       ...DEFAULTS,
       labels: {},
       cssTab: 'vanilla',
+      presetLang: 'ja',
     };
 
     function getConfig() {
@@ -447,10 +494,42 @@
 
     function defaultLabel(level) {
       const map = {
-        '-2': 'caption', '-1': 'small', 0: 'body',
-        1: 'lead', 2: 'h4', 3: 'h3', 4: 'h2', 5: 'h1', 6: 'display', 7: 'hero', 8: 'mega',
+        '-3': 'micro', '-2': 'caption', '-1': 'small', 0: 'body',
+        1: 'lead', 2: 'h4', 3: 'h3', 4: 'h2', 5: 'h1',
+        6: 'display', 7: 'hero', 8: 'mega', 9: 'jumbo',
       };
       return map[String(level)] ?? `level-${level}`;
+    }
+
+    function presetLabel(p) {
+      return state.presetLang === 'ja' ? p.ja : p.en;
+    }
+
+    function wcagBodyStatus(px) {
+      if (px >= WCAG.bodyRecommended) return { level: 'ok', label: 'AA 推奨', badge: 'badge-aa' };
+      if (px >= 14) return { level: 'warn', label: 'やや小', badge: 'badge-warn' };
+      if (px >= WCAG.captionMin) return { level: 'warn', label: '注釈向け', badge: 'badge-warn' };
+      if (px >= WCAG.absoluteMin) return { level: 'danger', label: '要確認', badge: 'badge-danger' };
+      return { level: 'danger', label: '非推奨', badge: 'badge-fail' };
+    }
+
+    function wcagLargeTextStatus(px, bold = false) {
+      const isLargeAA = bold ? px >= WCAG.largeTextAABold : px >= WCAG.largeTextAA;
+      const isLargeAAA = bold ? px >= WCAG.largeTextAAABold : px >= WCAG.largeTextAAA;
+      if (isLargeAAA) return { label: '大文字 AAA', badge: 'badge-aaa', contrast: '4.5:1' };
+      if (isLargeAA) return { label: '大文字 AA', badge: 'badge-aa', contrast: '3:1' };
+      return { label: '通常文字', badge: '', contrast: '4.5:1 (AA)' };
+    }
+
+    function wcagCheckLevel(level, c) {
+      const sp = fluidMin(level, c);
+      const pc = fluidMax(level, c);
+      const atVw = sizeAtViewport(level, state.previewViewport, c);
+      const body = wcagBodyStatus(sp);
+      const largeSp = wcagLargeTextStatus(sp);
+      const largePc = wcagLargeTextStatus(pc);
+      const zoom200 = atVw * 2;
+      return { sp, pc, atVw, body, largeSp, largePc, zoom200 };
     }
 
     function levelsRange() {
@@ -475,6 +554,10 @@
         </div>
 
         <div class="section-title">スケール比</div>
+        <div class="lang-toggle" id="presetLangToggle">
+          <button type="button" data-lang="ja" class="${state.presetLang === 'ja' ? 'active' : ''}">日本語</button>
+          <button type="button" data-lang="en" class="${state.presetLang === 'en' ? 'active' : ''}">English</button>
+        </div>
         <div class="preset-btns" id="ratioMinPresets"></div>
         <div class="field">
           <label for="fontRatioMin">SP (--font-ratio-min)</label>
@@ -528,26 +611,42 @@
         </div>
       `;
 
-      ['ratioMinPresets', 'ratioMaxPresets'].forEach((id, idx) => {
-        const targetId = idx === 0 ? 'fontRatioMin' : 'fontRatioMax';
-        const container = document.getElementById(id);
-        Object.entries(RATIO_PRESETS).forEach(([name, val]) => {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.textContent = name;
-          btn.title = String(val);
-          btn.addEventListener('click', () => {
-            document.getElementById(targetId).value = val;
-            readControls();
-            render();
+      refreshPresetButtons();
+
+      document.getElementById('presetLangToggle').querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.presetLang = btn.dataset.lang;
+          document.getElementById('presetLangToggle').querySelectorAll('button').forEach(b => {
+            b.classList.toggle('active', b.dataset.lang === state.presetLang);
           });
-          container.appendChild(btn);
+          refreshPresetButtons();
         });
       });
 
       el.querySelectorAll('input, select').forEach(input => {
         input.addEventListener('input', () => { readControls(); render(); });
         input.addEventListener('change', () => { readControls(); render(); });
+      });
+    }
+
+    function refreshPresetButtons() {
+      ['ratioMinPresets', 'ratioMaxPresets'].forEach((id, idx) => {
+        const targetId = idx === 0 ? 'fontRatioMin' : 'fontRatioMax';
+        const container = document.getElementById(id);
+        if (!container) return;
+        container.innerHTML = '';
+        RATIO_PRESETS.forEach(p => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = presetLabel(p);
+          btn.title = `${p.ja} / ${p.en} (${p.value})`;
+          btn.addEventListener('click', () => {
+            document.getElementById(targetId).value = p.value;
+            readControls();
+            render();
+          });
+          container.appendChild(btn);
+        });
       });
     }
 
@@ -714,8 +813,11 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
 
         let rowClass = '';
         let badge = '';
-        if (sp < 10) { rowClass = 'danger-row'; badge = '<span class="badge badge-danger">&lt;10px</span>'; }
-        else if (sp < 12) { rowClass = 'warn-row'; badge = '<span class="badge badge-warn">&lt;12px</span>'; }
+        const wcag = wcagCheckLevel(level, c);
+        badge += `<span class="badge ${wcag.body.badge}">${wcag.body.label}</span>`;
+        if (wcag.largeSp.badge) badge += ` <span class="badge ${wcag.largeSp.badge}">${wcag.largeSp.label}</span>`;
+        if (sp < WCAG.absoluteMin) { rowClass = 'danger-row'; badge += ' <span class="badge badge-danger">&lt;10px</span>'; }
+        else if (sp < WCAG.captionMin) { rowClass = 'warn-row'; badge += ' <span class="badge badge-warn">&lt;12px</span>'; }
         if (level === check.closestLevel) {
           rowClass += ' highlight-row';
           badge += ' <span class="badge badge-ok">≈' + state.targetBodyPx + 'px</span>';
@@ -739,11 +841,11 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
           <strong>pow()</strong>: SP = base × ratio<sup>level</sup> — レベル間ジャンプ率が一定（${fmtRatio(fluidMin(1,c), fluidMin(0,c))}）。
           <strong>線形（参考）</strong>: base + step×level — ジャンプ率はレベルが上がるほど低下。
         </p>
-        <table>
+        <table id="scaleTable">
           <thead>
             <tr>
               <th>Lv</th><th>用途</th><th>SP min</th><th>PC max</th>
-              <th>${state.previewViewport}px</th><th>SP jump</th><th>線形 SP/PC</th><th></th>
+              <th>${state.previewViewport}px</th><th>SP jump</th><th>線形 SP/PC</th><th>WCAG</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -752,23 +854,108 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
     }
 
     function renderPreview(c) {
-      const levels = levelsRange().filter(l => l >= state.levelMin && l <= Math.min(state.levelMax, 6));
+      const levels = levelsRange();
+      const vw = clampViewport(state.previewViewport, c);
       const blocks = levels.map(level => {
-        const px = sizeAtViewport(level, state.previewViewport, c);
-        return `<div class="preview-block">
-          <div class="preview-meta">Lv ${level} · ${getLabel(level)} · ${fmtPx(px)} @ ${state.previewViewport}px</div>
+        const px = sizeAtViewport(level, vw, c);
+        return `<div class="preview-block" data-preview-level="${level}">
+          <div class="preview-meta">Lv ${level} · ${getLabel(level)} · <span class="preview-px">${fmtPx(px)}</span> @ <span class="preview-vw">${vw}</span>px</div>
           <div class="preview-text" style="font-size: ${px}px">あいうえお The quick brown fox — ${getLabel(level)}</div>
         </div>`;
       }).join('');
 
-      return `<div class="card">
+      return `<div class="card" id="previewCard">
         <h2>タイポグラフィプレビュー</h2>
         <div class="viewport-bar">
           <label for="previewViewport">ビューポート</label>
-          <input type="range" id="previewViewport" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${state.previewViewport}" step="1">
-          <output id="previewViewportOut">${state.previewViewport}px</output>
+          <input type="range" id="previewViewport" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${vw}" step="1">
+          <input type="number" id="previewViewportNum" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${vw}" step="1" aria-label="ビューポート幅 (px)">
+          <span style="font-size:0.75rem;color:var(--text-muted)">px</span>
         </div>
-        ${blocks}
+        <div id="previewBlocks">${blocks}</div>
+      </div>`;
+    }
+
+    function clampViewport(vw, c) {
+      return Math.max(c.fontWidthMin, Math.min(c.fontWidthMax, vw));
+    }
+
+    function updatePreviewViewport(vw, c) {
+      state.previewViewport = clampViewport(vw, c);
+      const slider = document.getElementById('previewViewport');
+      const num = document.getElementById('previewViewportNum');
+      if (slider) slider.value = state.previewViewport;
+      if (num && document.activeElement !== num) num.value = state.previewViewport;
+
+      document.querySelectorAll('#scaleTable thead th:nth-child(5)').forEach(th => {
+        th.textContent = state.previewViewport + 'px';
+      });
+      document.querySelectorAll('#scaleTable tbody tr').forEach((row, i) => {
+        const level = levelsRange()[i];
+        if (level == null) return;
+        const px = sizeAtViewport(level, state.previewViewport, c);
+        const cells = row.querySelectorAll('td');
+        if (cells[4]) cells[4].textContent = fmtPx(px);
+      });
+
+      document.querySelectorAll('[data-preview-level]').forEach(el => {
+        const level = parseInt(el.dataset.previewLevel, 10);
+        const px = sizeAtViewport(level, state.previewViewport, c);
+        el.querySelector('.preview-px').textContent = fmtPx(px);
+        el.querySelector('.preview-vw').textContent = state.previewViewport;
+        el.querySelector('.preview-text').style.fontSize = px + 'px';
+      });
+
+      document.querySelector('#wcagTable thead th:nth-child(4)')?.textContent = state.previewViewport + 'px';
+      document.querySelectorAll('#wcagTable tbody tr').forEach((row, i) => {
+        const level = levelsRange()[i];
+        if (level == null) return;
+        const w = wcagCheckLevel(level, c);
+        const cells = row.querySelectorAll('td');
+        if (cells[3]) cells[3].textContent = fmtPx(w.atVw);
+        if (cells[4]) cells[4].innerHTML = `<span class="badge ${w.body.badge}">${w.body.label}</span>`;
+        if (cells[5]) cells[5].innerHTML = w.largeSp.badge
+          ? `<span class="badge ${w.largeSp.badge}">${w.largeSp.label}</span>`
+          : '通常 (4.5:1)';
+        if (cells[6]) cells[6].textContent = fmtPx(w.zoom200);
+      });
+    }
+
+    function renderWCAG(c) {
+      const levels = levelsRange();
+      const rows = levels.map(level => {
+        const w = wcagCheckLevel(level, c);
+        const largeCell = w.largeSp.badge
+          ? `<span class="badge ${w.largeSp.badge}">${w.largeSp.label}</span> <small>(${w.largeSp.contrast})</small>`
+          : `通常 <small>(${w.largeSp.contrast})</small>`;
+        return `<tr>
+          <td>${level}</td>
+          <td>${getLabel(level)}</td>
+          <td>${fmtPx(w.sp)}</td>
+          <td>${fmtPx(w.atVw)}</td>
+          <td><span class="badge ${w.body.badge}">${w.body.label}</span></td>
+          <td>${largeCell}</td>
+          <td>${fmtPx(w.zoom200)}</td>
+        </tr>`;
+      }).join('');
+
+      return `<div class="card">
+        <h2>WCAG アクセシビリティチェック</h2>
+        <p class="compare-note">
+          WCAG は px 固定の最小フォントを規定しませんが、本文 <strong>16px 推奨</strong>（1.4.4 200% 拡大）、
+          大文字 AA は <strong>≥24px</strong>（または太字 ≥19px）でコントラスト <strong>3:1</strong>（1.4.3）、
+          AAA 大文字は <strong>≥18.67px 太字 / ≥24px</strong> で <strong>4.5:1</strong>（1.4.6）。
+          200% 列は ${state.previewViewport}px 時のサイズ ×2（1.4.4 目安）。
+        </p>
+        <table id="wcagTable">
+          <thead>
+            <tr>
+              <th>Lv</th><th>用途</th><th>SP min</th>
+              <th>${state.previewViewport}px</th><th>本文 16px</th><th>文字種別 (AA)</th><th>200% 時</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
       </div>`;
     }
 
@@ -845,16 +1032,34 @@ ${levels.map(l => `.text-${getLabel(l)} { --font-level: ${l}; }`).join('\n')}`;
       main.innerHTML =
         renderScaleTable(c) +
         renderPreview(c) +
+        renderWCAG(c) +
         renderPractical(c) +
         renderCSS(c);
 
-      const vp = document.getElementById('previewViewport');
-      const vpOut = document.getElementById('previewViewportOut');
-      if (vp) {
-        vp.addEventListener('input', () => {
-          state.previewViewport = parseInt(vp.value, 10);
-          vpOut.textContent = state.previewViewport + 'px';
-          render();
+      bindMainEvents(c);
+    }
+
+    function bindMainEvents(c) {
+      const main = document.getElementById('main');
+      const slider = document.getElementById('previewViewport');
+      const num = document.getElementById('previewViewportNum');
+
+      if (slider) {
+        slider.addEventListener('input', () => {
+          updatePreviewViewport(parseInt(slider.value, 10), c);
+        });
+      }
+
+      if (num) {
+        num.addEventListener('change', () => {
+          updatePreviewViewport(parseInt(num.value, 10) || c.fontWidthMin, c);
+        });
+        num.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            updatePreviewViewport(parseInt(num.value, 10) || c.fontWidthMin, c);
+            num.blur();
+          }
         });
       }
 
