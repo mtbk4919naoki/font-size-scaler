@@ -106,7 +106,7 @@ Pages は `main` ブランチ root 配信。push 後 1〜2 分で反映。
 | `spa` / `spb` / `pca` / `pcb` | 上記 1・2 へ（後方互換） | — |
 | `lng` | `lang` | ja |
 | `tab` | `cssTab` | vanilla |
-| `ff` | `googleFont` | Inter |
+| `ff` | `googleFont` | Noto Sans JP |
 | `ptab` | `previewTab` | list / sample |
 | `lb` | `labels` | `0:body,1:lead`（level:encodeURIComponent(label) をカンマ連結） |
 
@@ -169,7 +169,7 @@ node scripts/verify-formula.mjs
 | 目標サイズ PC 1 / 2 / 3 | 10px / 21px / 36px |
 | プレビュー vw | 768px |
 | プレビュータブ | list |
-| Google Font | （空 = システムデフォルト） |
+| Google Font | Noto Sans JP |
 
 ## UI セクション概要
 

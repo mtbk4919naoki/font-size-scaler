@@ -104,7 +104,7 @@
         figmaVarsModalSteps: '<ol><li><strong>Variables Import</strong> タブで「<strong>ダウンロード</strong>」→ <code>font-size-scaler-variables.zip</code></li><li>ZIP を展開（<code>manifest.json</code> / <code>sp.tokens.json</code> / <code>pc.tokens.json</code>）</li><li>Figma で <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> を開き、<code>manifest.json</code> を選択</li><li><code>Type Scale SP</code> / <code>Type Scale PC</code> の 2 コレクションが作成されます（Default モード）</li><li>Variables を Text Style の font-size にバインド。font family / weight は Figma 側で別途指定</li></ol><p>プレビュー・コピーは SP トークン JSON です。インポートには ZIP 内 3 ファイルが必要です。</p>',
         tokensStudioIntro: 'Typography トークン + SP/PC テーマの JSON。<a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio</a> から Text Style としてエクスポート（Starter でもテーマ切替可）。',
         tokensStudioModalTitle: 'Tokens Studio への取り込み',
-        tokensStudioModalNote: '<strong>注意:</strong> 出力は font-size 中心の Typography トークンです。font family は <code>Inter</code>、font weight は <code>Regular</code> のプレースホルダーです。Figma 側で書体を差し替えてください。fluid clamp は <code>description</code> に参考値として記載しています。',
+        tokensStudioModalNote: '<strong>注意:</strong> 出力は font-size 中心の Typography トークンです。font family は <code>Noto Sans JP</code>、font weight は <code>Regular</code> のプレースホルダーです。Figma 側で書体を差し替えてください。fluid clamp は <code>description</code> に参考値として記載しています。',
         tokensStudioModalSteps: '<ol><li><strong>Tokens Studio</strong> タブで JSON を「<strong>ダウンロード</strong>」または「<strong>コピー</strong>」（<code>font-size-scaler-tokens-studio.json</code>）</li><li>Figma で <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio for Figma</a> を開く</li><li>Settings（歯車）→ <strong>Load from file</strong> で JSON を読み込む</li><li>プラグイン上部のテーマ <strong>SP</strong> / <strong>PC</strong> で Token Set を切り替える</li><li>テキストを選択 → トークン（<code>text-body</code> 等）をクリックして適用（モバイル用フレーム＝SP、PC 用フレーム＝PC）</li><li>Text Style 化する場合: Styles &amp; Variables → <strong>Export to Figma</strong> → Typography（テーマごとに Export。同名スタイルは上書きされます）</li></ol><p><strong>SP / PC について:</strong> Figma 上に切替ボタンはありません。フレームごとにテーマとスタイルを使い分けてください。実装の <code>clamp()</code> は Vanilla CSS タブが正です。</p><p>Variables Import との併用: font-size Variables は Variables Import、Text Style は Tokens Studio。</p>',
         googleFontLabel: 'Google Fonts',
         googleFontDefault: 'システムデフォルト',
@@ -209,7 +209,7 @@
         figmaVarsModalSteps: '<ol><li>On the <strong>Variables Import</strong> tab, click <strong>Download</strong> → <code>font-size-scaler-variables.zip</code></li><li>Extract the ZIP (<code>manifest.json</code>, <code>sp.tokens.json</code>, <code>pc.tokens.json</code>)</li><li>In Figma, open <a href="https://www.figma.com/community/plugin/1253424530216967528/variables-import" target="_blank" rel="noopener">Variables Import</a> and select <code>manifest.json</code></li><li>Collections <code>Type Scale SP</code> and <code>Type Scale PC</code> are created (Default mode each)</li><li>Bind variables to Text Style font-size. Set font family / weight in Figma separately</li></ol><p>Preview and Copy show the SP token JSON. Import requires all three ZIP files.</p>',
         tokensStudioIntro: 'Typography tokens + SP/PC themes as JSON for <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio</a> → export as Text Styles (theme switching works on Starter).',
         tokensStudioModalTitle: 'Import via Tokens Studio',
-        tokensStudioModalNote: '<strong>Note:</strong> Output is font-size–focused Typography tokens. <code>Inter</code> / <code>Regular</code> are placeholders—swap the typeface in Figma. Fluid clamp references are in each token\'s <code>description</code>.',
+        tokensStudioModalNote: '<strong>Note:</strong> Output is font-size–focused Typography tokens. <code>Noto Sans JP</code> / <code>Regular</code> are placeholders—swap the typeface in Figma. Fluid clamp references are in each token\'s <code>description</code>.',
         tokensStudioModalSteps: '<ol><li>On the <strong>Tokens Studio</strong> tab, <strong>Download</strong> or <strong>Copy</strong> <code>font-size-scaler-tokens-studio.json</code></li><li>In Figma, open <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio for Figma</a></li><li>Settings (gear) → <strong>Load from file</strong></li><li>Switch theme <strong>SP</strong> / <strong>PC</strong> at the top of the plugin</li><li>Select text → click a token (<code>text-body</code>, etc.) to apply (mobile frames = SP, desktop frames = PC)</li><li>For Text Styles: Styles &amp; Variables → <strong>Export to Figma</strong> → Typography (export per theme; same names overwrite)</li></ol><p><strong>SP / PC:</strong> There is no toggle in Figma—use themes and styles per frame. For production <code>clamp()</code>, use the Vanilla CSS tab.</p><p>Pair with Variables Import: variables there, Text Styles here.</p>',
         googleFontLabel: 'Google Fonts',
         googleFontDefault: 'System default',
@@ -332,7 +332,7 @@
       targetPc2: 21,
       targetPc3: 36,
       previewViewport: 768,
-      googleFont: '',
+      googleFont: 'Noto Sans JP',
       previewTab: 'list',
     };
 
@@ -445,7 +445,7 @@
     }
 
     function tokensStudioFontFamily() {
-      return state.googleFont || 'Inter';
+      return state.googleFont || 'Noto Sans JP';
     }
 
     function googleFontImportPrefix() {
