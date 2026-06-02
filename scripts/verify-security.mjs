@@ -31,6 +31,13 @@ if (indexHtml.includes('<script>') && indexHtml.includes('location.pathname')) {
 }
 if (!indexHtml.includes('Content-Security-Policy')) fail('missing CSP meta tag');
 if (!indexHtml.includes('js/base-path.js')) fail('missing external base-path.js');
+if (!indexHtml.includes('js/preview-sample.js')) fail('missing preview-sample.js script');
+if (!indexHtml.includes('js/app.js')) fail('missing app.js script');
+const previewIdx = indexHtml.indexOf('js/preview-sample.js');
+const appIdx = indexHtml.indexOf('js/app.js');
+if (previewIdx === -1 || appIdx === -1 || previewIdx > appIdx) {
+  fail('preview-sample.js must load before app.js');
+}
 
 // --- mirrored sanitizer logic (must stay aligned with app.js) ---
 const MAX_LABEL_LEN = 32;

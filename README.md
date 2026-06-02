@@ -17,7 +17,7 @@ https://mtbk4919naoki.github.io/font-size-scaler/
 open index.html
 ```
 
-ビルド不要。`css/styles.css` と `js/app.js` を相対参照します。
+ビルド不要。`css/styles.css` と `js/preview-sample.js` · `js/app.js` を相対参照します。
 
 ### 設定の保存・共有
 
@@ -30,6 +30,8 @@ open index.html
 | **初期状態に戻す** | デフォルト値に復元。`localStorage` と URL パラメータもクリア |
 
 起動時の復元優先順位: **URL パラメータ → localStorage → デフォルト**
+
+共有 URL にはプレビュー字体（`ff`）やプレビュータブ（`ptab=list|sample`）も含まれます。
 
 ### Figma へのエクスポート
 
@@ -49,23 +51,28 @@ open index.html
 ## 機能
 
 - **変数調整** — 基底フォント（SP/PC）、スケール比、ビューポート、絶対下限、レベル範囲
-- **スケール表** — (SP)/(PC)/プレビュー vw 各列、ジャンプ率 SP/PC、備考（WCAG・目標 px バッジ）、行ごとの CSS クラス名コピー
-- **タイポグラフィプレビュー** — スライダー + 数値入力
+- **Google Fonts** — サイドバーでプレビュー字体を選択。Vanilla CSS の `@import` と Tokens Studio 出力にも反映
+- **スケール表** — SP / PC / プレビュー vw 各列、プレビュー幅でのジャンプ率 1 列、備考（WCAG・目標 px バッジ）、行ごとの CSS クラス名コピー
+- **タイポグラフィプレビュー** — **一覧** / **サンプル** タブ。スライダー + 数値入力でプレビュー vw を変更
+  - **一覧** — 各レベルのサイズとサンプル文
+  - **サンプル** — ドキュメントサイト風レイアウト（サイドバー、KV、記事カード等）。639px 未満でサイドバーはドロワーに切替
 - **WCAG チェック** — 本文 16px 推奨、大文字 AA/AAA、200% 拡大
-- **実用チェック** — SP A/B・PC A/B の 4 目標 px について、各端点で最接近レベル ±1 段階をコンパクト表で表示
+- **実用チェック** — SP A/B・PC A/B の 4 目標 px について、各端点で最接近レベル ±1 段階を表示。目標値との差は **絶対 px · 相対 %**（±5% 以上は赤字）
 - **CSS / Figma 出力** — Vanilla CSS / Tailwind v4 / Variables Import / Tokens Studio（4 タブ・コピー・ダウンロード）。Figma タブに使い方モーダル付き
 - **日英切替** — ヘッダー右上
 
 ## プロジェクト構成
 
 ```
-index.html          シェル + GitHub Pages 用 base href
-css/styles.css      UI スタイル
-js/app.js           アプリロジック
-docs/               開発ガイド
+index.html              シェル + GTM + CSP + GitHub Pages 用 base href
+css/styles.css          UI スタイル
+js/preview-sample.js    プレビュー（一覧 / サンプルレイアウト）
+js/app.js               アプリロジック
+docs/                   開発ガイド
 scripts/
-  serve.sh          ローカルサーバー
-  verify-formula.mjs  計算式検証
+  serve.sh              ローカルサーバー
+  verify-formula.mjs    計算式検証
+  verify-security.mjs   入力サニタイズの回帰チェック
 ```
 
 ## 開発

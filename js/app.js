@@ -1,6 +1,7 @@
 /**
  * Font Size Scaler — application logic
  * Sections: i18n → constants/state → scale math → CSS export → UI render → init
+ * Preview sample layout: js/preview-sample.js (FSSPreviewSample.create)
  * @see docs/DEVELOPMENT.md
  */
     const I18N = {
@@ -19,29 +20,77 @@
         secPractical: '実用チェック',
         practicalSpA: 'SP A (px)', practicalSpB: 'SP B (px)',
         practicalPcA: 'PC A (px)', practicalPcB: 'PC B (px)',
-        practicalIntro: '各目標 px で SP / PC 端それぞれの最接近レベルと前後 1 段階を表示。',
+        practicalIntro: '各目標 px で SP / PC 端それぞれの最接近レベル ±1 段階を表示。差分は px / %（±5% 以上で赤字）。',
         colCheck: 'チェック', colBelow: '1つ下', colNearest: '最接近', colAbove: '1つ上',
         btnSave: 'ブラウザに保存', btnShare: '共有URLをコピー', btnReset: '初期状態に戻す',
         saved: '保存しました', shared: 'URL をコピーしました', resetDone: '初期状態に戻しました',
         classCopied: 'コピーしました',
         colCss: 'CSS',
         tipColCss: '用途ラベルから生成したクラス名（text-*）をクリップボードにコピー。',
-        badgeClosest: '最接近',
         scaleTable: 'スケール表',
-        scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — ジャンプ率は SP {spJump} / PC {pcJump} で一定（下限適用時のみ SP が変動）。絶対下限 {floor}px 未満はクランプ。',
-        colLevel: 'レベル', colUsage: '用途', colSp: '(SP)', colPc: '(PC)',
-        colJumpSp: 'ジャンプ率 SP', colJumpPc: 'ジャンプ率 PC', colNotes: '備考',
+        scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — ジャンプ率はプレビュー幅（{vw}px）での前レベルからの倍率。絶対下限 {floor}px 未満はクランプ。',
+        colLevel: 'レベル', colUsage: '用途', colSp: 'SP', colPc: 'PC',
+        colJump: 'ジャンプ率', colNotes: '備考',
         tipLevel: 'モジュラースケールの段階。0 = 基底、正 = 大きい、負 = 小さい。',
         tipUsage: 'CSS クラス名などに使う用途ラベル。編集可能。',
         tipSp: '最小ビューポート ({vw}px) 時の clamp 下限。絶対下限 {floor}px を適用後。',
         tipPc: '最大ビューポート ({vw}px) 時の clamp 上限。',
         tipPreview: 'プレビュー中のビューポート ({vw}px) での実際の font-size。',
-        tipJumpSp: 'ひとつ下のレベルからの倍率（SP 端）。通常 {ratio}×。下限適用時は * 付き。',
-        tipJumpPc: 'ひとつ下のレベルからの倍率（PC 端）。通常 {ratio}×。',
+        tipJump: 'プレビュー幅 ({vw}px) でのひとつ下のレベルからの倍率。',
         tipNotes: 'WCAG 判定、下限クランプ、目標本文サイズに近いレベルなど。',
         badgeFloor: '下限', badgeTarget: '≈{px}px',
         floorTitle: '計算値 {raw}',
         previewTitle: 'タイポグラフィプレビュー', previewViewport: 'ビューポート',
+        previewTabList: '一覧', previewTabSample: 'サンプル',
+        sampleBrand: 'Acme Docs',
+        sampleMenuOpen: 'メニューを開く',
+        sampleHeaderSearch: '検索',
+        sampleSidebarDoc: 'ドキュメント',
+        sampleSidebarNav1: 'タイポグラフィスケール',
+        sampleSidebarNav2: 'コンポーネント',
+        sampleSidebarNav3: 'トークン',
+        sampleSidebarProject: 'プロジェクト',
+        sampleSidebarSub1: '設定',
+        sampleSidebarSub2: 'メンバー',
+        sampleBreadcrumb: 'Docs / タイポグラフィ / スケール',
+        samplePageTitle: '流動タイプスケール',
+        samplePageLead: 'サイドバー・リスト・セクション入れ子を含む、実ページに近いレイアウトで文字サイズ感を確認できます。',
+        sampleKvEyebrow: 'ガイド',
+        sampleKvTitle: '文脈の中のスケール',
+        sampleKvLead: 'ヒーロー画像上の見出しとリード。display / lead レベルのバランス確認用です。',
+        sampleSectionOverview: '概要',
+        sampleMediaTitle: '画像と本文',
+        sampleMediaBody: 'メディアブロックの見出し (h3) と本文 (body)。キャプションは caption レベルです。',
+        sampleMediaCaption: '図1 — スクリーンショット例',
+        sampleSectionArticles: '関連記事',
+        sampleArticle1Title: 'モジュラ比の選び方',
+        sampleArticle1Body: 'リスト項目のタイトル (h4) と概要 (body)。日付は caption レベルです。',
+        sampleArticle1Meta: '2026年3月12日',
+        sampleArticle2Title: 'トークンを CSS にマッピング',
+        sampleArticle2Body: '2 件目のリスト項目。入れ子サイドバーと同じスケール階層を共有します。',
+        sampleArticle2Meta: '2026年2月3日',
+        sampleSectionFeatured: 'ピックアップ',
+        sampleFeatured1Title: '比率プリセット',
+        sampleFeatured1Body: 'Major Third や Perfect Fourth など、よく使う比率をワンクリックで試せます。',
+        sampleFeatured1Meta: 'はじめに',
+        sampleFeatured2Title: 'WCAG チェック',
+        sampleFeatured2Body: '本文 16px 推奨や大文字 AA 基準を、各レベルごとに確認できます。',
+        sampleFeatured2Meta: 'アクセシビリティ',
+        sampleFeatured3Title: 'Figma エクスポート',
+        sampleFeatured3Body: 'Variables Import と Tokens Studio 向けの JSON / ZIP を出力します。',
+        sampleFeatured3Meta: 'デザイン引き渡し',
+        sampleSectionCards: 'クイックリンク',
+        sampleCard1Title: 'CSS をエクスポート',
+        sampleCard1Body: 'カード見出し h4、本文 body、更新日 micro の例です。',
+        sampleCard1Meta: '本日更新',
+        sampleCard2Title: 'Figma Variables',
+        sampleCard2Body: 'コンパクトなリンクカード。ボタンより控えめな情報密度です。',
+        sampleCard2Meta: 'Variables Import',
+        sampleBtnPrimary: 'プリセットを保存',
+        sampleBtnSecondary: 'URL を共有',
+        sampleFooterCol1: 'プロダクト', sampleFooterCol2: 'リソース', sampleFooterCol3: '法務',
+        sampleFooterLink: 'リンク項目',
+        sampleFooterCopy: '© 2026 Acme Docs',
         previewSample: 'あいうえお The quick brown fox — {label}',
         wcagTitle: 'WCAG アクセシビリティチェック',
         wcagNote: 'WCAG は px 固定の最小フォントを規定しませんが、本文 <strong>16px 推奨</strong>（1.4.4）。大文字 AA: ≥24px（太字 ≥19px）で 3:1（1.4.3）。AAA 大文字: ≥18.67px 太字 / ≥24px で 4.5:1（1.4.6）。(SP) は下限 {floor}px 適用後。{vw}px 列はプレビュー幅でのサイズ。200% 列は ×2。',
@@ -89,29 +138,77 @@
         secPractical: 'Practical check',
         practicalSpA: 'SP A (px)', practicalSpB: 'SP B (px)',
         practicalPcA: 'PC A (px)', practicalPcB: 'PC B (px)',
-        practicalIntro: 'Nearest integer level ±1 step at each SP / PC endpoint.',
+        practicalIntro: 'Nearest integer level ±1 step at each SP / PC endpoint. Diff shown as px / % (red when ±5% or more).',
         colCheck: 'Check', colBelow: 'Below', colNearest: 'Nearest', colAbove: 'Above',
         btnSave: 'Save to browser', btnShare: 'Copy share URL', btnReset: 'Reset to defaults',
         saved: 'Saved', shared: 'URL copied', resetDone: 'Reset to defaults',
         classCopied: 'Copied',
         colCss: 'CSS',
         tipColCss: 'Copy the utility class name (text-*) from the usage label.',
-        badgeClosest: 'nearest',
         scaleTable: 'Scale table',
-        scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — jump rate is constant at SP {spJump} / PC {pcJump} (SP varies when floor applies). Values below {floor}px are clamped.',
-        colLevel: 'Level', colUsage: 'Usage', colSp: '(SP)', colPc: '(PC)',
-        colJumpSp: 'Jump SP', colJumpPc: 'Jump PC', colNotes: 'Notes',
+        scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — jump rate is the ratio from the previous level at the preview width ({vw}px). Values below {floor}px are clamped.',
+        colLevel: 'Level', colUsage: 'Usage', colSp: 'SP', colPc: 'PC',
+        colJump: 'Jump', colNotes: 'Notes',
         tipLevel: 'Modular scale step. 0 = base, positive = larger, negative = smaller.',
         tipUsage: 'Usage label for CSS class names. Editable.',
         tipSp: 'clamp minimum at min viewport ({vw}px), after {floor}px floor.',
         tipPc: 'clamp maximum at max viewport ({vw}px).',
         tipPreview: 'Computed font-size at preview viewport ({vw}px).',
-        tipJumpSp: 'Ratio from previous level (SP end). Usually {ratio}×. * when floor applies.',
-        tipJumpPc: 'Ratio from previous level (PC end). Usually {ratio}×.',
+        tipJump: 'Ratio from the previous level at preview width ({vw}px).',
         tipNotes: 'WCAG status, floor clamp, level nearest target body size, etc.',
         badgeFloor: 'floor', badgeTarget: '≈{px}px',
         floorTitle: 'Computed {raw}',
         previewTitle: 'Typography preview', previewViewport: 'Viewport',
+        previewTabList: 'List', previewTabSample: 'Sample',
+        sampleBrand: 'Acme Docs',
+        sampleMenuOpen: 'Open menu',
+        sampleHeaderSearch: 'Search',
+        sampleSidebarDoc: 'Documentation',
+        sampleSidebarNav1: 'Typography scale',
+        sampleSidebarNav2: 'Components',
+        sampleSidebarNav3: 'Tokens',
+        sampleSidebarProject: 'Project',
+        sampleSidebarSub1: 'Settings',
+        sampleSidebarSub2: 'Members',
+        sampleBreadcrumb: 'Docs / Typography / Scale',
+        samplePageTitle: 'Fluid type scale',
+        samplePageLead: 'A page-like sample with sidebar, lists, and nested sections to judge type in context.',
+        sampleKvEyebrow: 'Guide',
+        sampleKvTitle: 'Scale in context',
+        sampleKvLead: 'Hero headline and lead on imagery—display and lead levels at a practical size.',
+        sampleSectionOverview: 'Overview',
+        sampleMediaTitle: 'Image with supporting text',
+        sampleMediaBody: 'Media block heading (h3) and body copy. Caption for the figure label.',
+        sampleMediaCaption: 'Figure 1 — Example screenshot',
+        sampleSectionArticles: 'Related articles',
+        sampleArticle1Title: 'Choosing a modular ratio',
+        sampleArticle1Body: 'List item title (h4) and summary (body). Date uses caption.',
+        sampleArticle1Meta: 'Mar 12, 2026',
+        sampleArticle2Title: 'Mapping tokens to CSS',
+        sampleArticle2Body: 'Second list item—same scale hierarchy as the nested sidebar.',
+        sampleArticle2Meta: 'Feb 3, 2026',
+        sampleSectionFeatured: 'Spotlight',
+        sampleFeatured1Title: 'Ratio presets',
+        sampleFeatured1Body: 'Try common ratios like Major Third or Perfect Fourth in one click.',
+        sampleFeatured1Meta: 'Getting started',
+        sampleFeatured2Title: 'WCAG check',
+        sampleFeatured2Body: 'Review 16px body guidance and large-text AA thresholds per level.',
+        sampleFeatured2Meta: 'Accessibility',
+        sampleFeatured3Title: 'Figma export',
+        sampleFeatured3Body: 'Output JSON / ZIP for Variables Import and Tokens Studio.',
+        sampleFeatured3Meta: 'Design handoff',
+        sampleSectionCards: 'Quick links',
+        sampleCard1Title: 'Export CSS',
+        sampleCard1Body: 'Card heading h4, body text, updated stamp at micro.',
+        sampleCard1Meta: 'Updated today',
+        sampleCard2Title: 'Figma variables',
+        sampleCard2Body: 'Compact link card—lighter density than primary actions.',
+        sampleCard2Meta: 'Variables Import',
+        sampleBtnPrimary: 'Save preset',
+        sampleBtnSecondary: 'Share URL',
+        sampleFooterCol1: 'Product', sampleFooterCol2: 'Resources', sampleFooterCol3: 'Legal',
+        sampleFooterLink: 'Link item',
+        sampleFooterCopy: '© 2026 Acme Docs',
         previewSample: 'The quick brown fox — {label}',
         wcagTitle: 'WCAG accessibility check',
         wcagNote: 'WCAG does not mandate a minimum px size; <strong>16px body</strong> is recommended (1.4.4). Large AA: ≥24px (bold ≥19px) at 3:1 (1.4.3). AAA large: ≥18.67px bold / ≥24px at 4.5:1 (1.4.6). (SP) after {floor}px floor. {vw}px column = size at preview width. 200% = ×2.',
@@ -165,6 +262,12 @@
       return 'vanilla';
     }
 
+    const ALLOWED_PREVIEW_TABS = new Set(['list', 'sample']);
+
+    function normalizePreviewTab(tab) {
+      return ALLOWED_PREVIEW_TABS.has(tab) ? tab : 'list';
+    }
+
     function exportIntroKey(tab) {
       if (tab === 'figma-vars') return 'figmaVarsIntro';
       if (tab === 'tokens-studio') return 'tokensStudioIntro';
@@ -190,6 +293,7 @@
       download: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>',
       reset: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M2.5 8a5.5 5.5 0 0 1 9.3-4M13.5 8a5.5 5.5 0 0 1-9.3 4"/><path d="M11 2.5h2v2M5 13.5H3v-2"/></svg>',
       help: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><circle cx="8" cy="8" r="6.25"/><path d="M6.2 6.1a1.8 1.8 0 0 1 3.5.7c0 1.2-1.7 1.5-1.7 2.8M8 12.2h.01"/></svg>',
+      menu: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true"><path d="M2.5 4h11M2.5 8h11M2.5 12h11"/></svg>',
       figma: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M5.5 16H8V9.3H5.5a2.7 2.7 0 1 0 0 5.4zM8 0H5.5A2.7 2.7 0 0 0 8 2.7V0zM8 8H10.5a2.7 2.7 0 1 0 0-5.4H8V8zm0 2.7V16h2.5A2.7 2.7 0 0 0 8 10.7z"/></svg>',
     };
 
@@ -253,6 +357,7 @@
       practicalPcB: 21,
       previewViewport: 768,
       googleFont: '',
+      previewTab: 'list',
     };
 
     const STORAGE_KEY = 'font-size-scaler-v1';
@@ -261,10 +366,10 @@
       wm: 'fontWidthMin', wx: 'fontWidthMax', fl: 'fontSizeFloor', rb: 'remBase',
       vu: 'variableUnit', lmi: 'levelMin', lmx: 'levelMax', vw: 'previewViewport',
       spa: 'practicalSpA', spb: 'practicalSpB', pca: 'practicalPcA', pcb: 'practicalPcB',
-      lng: 'lang', tab: 'cssTab', ff: 'googleFont',
+      lng: 'lang', tab: 'cssTab', ff: 'googleFont', ptab: 'previewTab',
     };
     const INT_STATE_KEYS = new Set(['fontWidthMin', 'fontWidthMax', 'remBase', 'levelMin', 'levelMax', 'previewViewport']);
-    const STRING_STATE_KEYS = new Set(['lang', 'cssTab', 'variableUnit', 'googleFont']);
+    const STRING_STATE_KEYS = new Set(['lang', 'cssTab', 'variableUnit', 'googleFont', 'previewTab']);
     const ALLOWED_LANGS = new Set(['ja', 'en']);
     const ALLOWED_VARIABLE_UNITS = new Set(['100vi', '100cqi']);
     const MAX_LABEL_LEN = 32;
@@ -404,6 +509,7 @@
       state.variableUnit = normalizeVariableUnit(state.variableUnit);
       state.lang = normalizeLang(state.lang);
       state.cssTab = normalizeCssTab(state.cssTab);
+      state.previewTab = normalizePreviewTab(state.previewTab);
       state.googleFont = normalizeGoogleFont(state.googleFont);
       state.labels = sanitizeLabels(state.labels, state.levelMin, state.levelMax);
     }
@@ -428,6 +534,7 @@
       }
       if (data.lang != null) out.lang = normalizeLang(data.lang);
       if (data.cssTab != null) out.cssTab = normalizeCssTab(data.cssTab);
+      if (data.previewTab != null) out.previewTab = normalizePreviewTab(data.previewTab);
       if (data.variableUnit != null) out.variableUnit = normalizeVariableUnit(data.variableUnit);
       if (data.googleFont != null) out.googleFont = normalizeGoogleFont(data.googleFont);
       const levelMin = out.levelMin ?? state.levelMin ?? DEFAULTS.levelMin;
@@ -464,6 +571,7 @@
       if (clean.previewViewport != null) state.previewViewport = clean.previewViewport;
       if (clean.labels) state.labels = clean.labels;
       if (clean.cssTab) state.cssTab = clean.cssTab;
+      if (clean.previewTab) state.previewTab = clean.previewTab;
       if (clean.lang) state.lang = clean.lang;
       if (clean.variableUnit) state.variableUnit = clean.variableUnit;
       if (clean.googleFont != null) state.googleFont = clean.googleFont;
@@ -730,6 +838,38 @@
       return arr;
     }
 
+    function previewFontSizePx(level, c, vw) {
+      return sizeAtViewport(level, vw ?? state.previewViewport, c);
+    }
+
+    function previewTextStyle(level, c, vw) {
+      return `font-size:${previewFontSizePx(level, c, vw)}px`;
+    }
+
+    function jumpAtPreview(level, prevLevel, c, vw) {
+      if (prevLevel == null) return '—';
+      return fmtRatio(
+        sizeAtViewport(level, vw, c),
+        sizeAtViewport(prevLevel, vw, c),
+      );
+    }
+
+    let previewUI = null;
+
+    function getPreviewUI() {
+      if (!previewUI) {
+        previewUI = FSSPreviewSample.create({
+          t,
+          escapeHtml,
+          escapeAttr,
+          ICONS,
+          previewTextStyle,
+          previewFontFamilyStyle,
+        });
+      }
+      return previewUI;
+    }
+
     // --- UI render ---
 
     function buildControls() {
@@ -955,17 +1095,23 @@
       return [centerLevel - 1, centerLevel, centerLevel + 1];
     }
 
+    function formatTargetDiff(size, targetPx) {
+      const absDiff = size - targetPx;
+      const pctDiff = targetPx !== 0 ? (absDiff / targetPx) * 100 : 0;
+      const absStr = (absDiff >= 0 ? '+' : '') + fmt(absDiff, 1) + 'px';
+      const pctStr = (pctDiff >= 0 ? '+' : '') + fmt(pctDiff, 1) + '%';
+      const warn = Math.abs(pctDiff) >= 5;
+      return `<span class="cell-diff${warn ? ' cell-diff-warn' : ''}">${absStr} · ${pctStr}</span>`;
+    }
+
     function formatNeighborCell(level, targetPx, centerLevel, c, isSp) {
       const size = sizeAtEndpoint(level, isSp, c);
-      const diff = size - targetPx;
-      const diffStr = (diff >= 0 ? '+' : '') + fmt(diff, 1);
       const isCenter = level === centerLevel;
       return `<td class="cell-neighbor${isCenter ? ' highlight-cell' : ''}">
         <strong>Lv ${level}</strong>
         <span class="cell-muted">${escapeHtml(getLabel(level))}</span>
         ${fmtPx(size)}
-        <span class="cell-muted">${diffStr}</span>
-        ${isCenter ? `<span class="badge badge-ok">${t('badgeClosest')}</span>` : ''}
+        ${formatTargetDiff(size, targetPx)}
       </td>`;
     }
 
@@ -1402,13 +1548,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         const sp = effectiveSpMin(level, c);
         const pc = fluidMax(level, c);
         const atVw = sizeAtViewport(level, vw, c);
-        const prevSp = i > 0 ? effectiveSpMin(levels[i - 1], c) : null;
-        const prevPc = i > 0 ? fluidMax(levels[i - 1], c) : null;
-        const jumpPc = prevPc ? fmtRatio(pc, prevPc) : '—';
-        const jumpSpFloored = isFloored(level, c) && prevSp;
-        const jumpSp = prevSp
-          ? fmtRatio(sp, prevSp) + (jumpSpFloored ? '*' : '')
-          : '—';
+        const prevLevel = i > 0 ? levels[i - 1] : null;
+        const jump = jumpAtPreview(level, prevLevel, c, vw);
         const spCell = isFloored(level, c)
           ? `${fmtPx(sp)} <span class="badge badge-warn" title="${t('floorTitle', { raw: fmtPx(rawSp) })}">${t('badgeFloor')}</span>`
           : fmtPx(sp);
@@ -1432,8 +1573,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
           <td>${spCell}</td>
           <td>${fmtPx(pc)}</td>
           <td>${fmtPx(atVw)}</td>
-          <td>${jumpSp}</td>
-          <td>${jumpPc}</td>
+          <td>${jump}</td>
           <td>${notes}</td>
           <td><button type="button" class="class-copy-btn" data-class="${escapeAttr(cssClassName(level))}" title="${escapeAttr(cssClassName(level))}">${ICONS.copy}<span>CSS</span></button></td>
         </tr>`;
@@ -1445,8 +1585,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         thTip(t('colSp'), t('tipSp', { vw: c.fontWidthMin, floor: c.fontSizeFloor })),
         thTip(t('colPc'), t('tipPc', { vw: c.fontWidthMax })),
         thTip(`${vw}px`, t('tipPreview', { vw })),
-        thTip(t('colJumpSp'), t('tipJumpSp', { ratio: c.fontRatioMin })),
-        thTip(t('colJumpPc'), t('tipJumpPc', { ratio: c.fontRatioMax })),
+        thTip(t('colJump'), t('tipJump', { vw })),
         thTip(t('colNotes'), t('tipNotes')),
         thTip(t('colCss'), t('tipColCss')),
       ];
@@ -1457,8 +1596,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
           <span id="scaleToast" class="toast scale-toast"></span>
         </div>
         <p class="compare-note">${t('scaleNote', {
-          spJump: fmtRatio(fluidMin(1, c), fluidMin(0, c)),
-          pcJump: fmtRatio(fluidMax(1, c), fluidMax(0, c)),
+          vw,
           floor: c.fontSizeFloor,
         })}</p>
         <table id="scaleTable">
@@ -1469,25 +1607,33 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
     }
 
     function renderPreview(c) {
-      const levels = levelsRange();
       const vw = clampViewport(state.previewViewport, c);
-      const blocks = levels.map(level => {
-        const px = sizeAtViewport(level, vw, c);
-        return `<div class="preview-block" data-preview-level="${level}">
-          <div class="preview-meta">Lv ${level} · ${escapeHtml(getLabel(level))} · <span class="preview-px">${fmtPx(px)}</span> @ <span class="preview-vw">${vw}</span>px</div>
-          <div class="preview-text" style="font-size: ${px}px">${t('previewSample', { label: getLabel(level) })}</div>
-        </div>`;
-      }).join('');
+      const tab = state.previewTab;
+      const listActive = tab === 'list';
+      const fontWrap = previewFontFamilyStyle();
+      const fontAttr = fontWrap ? ` style="${escapeAttr(fontWrap)}"` : '';
+      const preview = getPreviewUI();
+      const body = listActive
+        ? `<div id="previewBlocks"${fontAttr}>${preview.renderList({
+          c, vw, levels: levelsRange(), sizeAtViewport, fmtPx, getLabel,
+        })}</div>`
+        : `<div class="preview-sample-scroll"><div class="preview-sample-frame" id="previewSampleFrame" style="width:${vw}px" data-vw="${vw}px"><div id="previewSample">${preview.renderSample(c, vw)}</div></div></div>`;
 
       return `<div class="card" id="previewCard">
-        <h2>${t('previewTitle')}</h2>
+        <div class="card-head-row">
+          <h2>${t('previewTitle')}</h2>
+          <div class="tabs preview-tabs">
+            <button type="button" class="${listActive ? 'active' : ''}" data-preview-tab="list">${t('previewTabList')}</button>
+            <button type="button" class="${!listActive ? 'active' : ''}" data-preview-tab="sample">${t('previewTabSample')}</button>
+          </div>
+        </div>
         <div class="viewport-bar">
           <label for="previewViewport">${t('previewViewport')}</label>
           <input type="range" id="previewViewport" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${vw}" step="1">
           <input type="number" id="previewViewportNum" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${vw}" step="1">
           <span style="font-size:0.75rem;color:var(--text-muted)">px</span>
         </div>
-        <div id="previewBlocks"${previewFontFamilyStyle() ? ` style="${escapeAttr(previewFontFamilyStyle())}"` : ''}>${blocks}</div>
+        ${body}
       </div>`;
     }
 
@@ -1502,22 +1648,40 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
       if (slider) slider.value = state.previewViewport;
       if (num && document.activeElement !== num) num.value = state.previewViewport;
 
+      const sampleFrame = document.getElementById('previewSampleFrame');
+      if (sampleFrame) {
+        sampleFrame.style.width = state.previewViewport + 'px';
+        sampleFrame.dataset.vw = state.previewViewport + 'px';
+      }
+      getPreviewUI().closeDrawerIfWide(state.previewViewport);
+
       const previewTh = document.querySelector('#scaleTable thead th:nth-child(5)');
       if (previewTh) previewTh.innerHTML = thTip(`${state.previewViewport}px`, t('tipPreview', { vw: state.previewViewport }));
+      const jumpTh = document.querySelector('#scaleTable thead th:nth-child(6)');
+      if (jumpTh) jumpTh.innerHTML = thTip(t('colJump'), t('tipJump', { vw: state.previewViewport }));
+
+      const tableLevels = levelsRange();
       document.querySelectorAll('#scaleTable tbody tr').forEach((row, i) => {
-        const level = levelsRange()[i];
+        const level = tableLevels[i];
         if (level == null) return;
         const px = sizeAtViewport(level, state.previewViewport, c);
+        const prevLevel = i > 0 ? tableLevels[i - 1] : null;
         const cells = row.querySelectorAll('td');
         if (cells[4]) cells[4].textContent = fmtPx(px);
+        if (cells[5]) cells[5].textContent = jumpAtPreview(level, prevLevel, c, state.previewViewport);
       });
 
-      document.querySelectorAll('[data-preview-level]').forEach(el => {
+      document.querySelectorAll('.preview-block[data-preview-level]').forEach(el => {
         const level = parseInt(el.dataset.previewLevel, 10);
         const px = sizeAtViewport(level, state.previewViewport, c);
         el.querySelector('.preview-px').textContent = fmtPx(px);
         el.querySelector('.preview-vw').textContent = state.previewViewport;
         el.querySelector('.preview-text').style.fontSize = px + 'px';
+      });
+
+      document.querySelectorAll('.preview-scale-text[data-preview-level]').forEach(el => {
+        const level = parseInt(el.dataset.previewLevel, 10);
+        el.style.fontSize = sizeAtViewport(level, state.previewViewport, c) + 'px';
       });
 
       const wcagHdr = document.querySelector('#wcagTable thead th:nth-child(4)');
@@ -1671,12 +1835,21 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         });
       });
 
-      main.querySelectorAll('.tabs button').forEach(btn => {
+      main.querySelectorAll('#exportCard .tabs button').forEach(btn => {
         btn.addEventListener('click', () => {
           state.cssTab = normalizeCssTab(btn.dataset.tab);
           render();
         });
       });
+
+      main.querySelectorAll('#previewCard .preview-tabs button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.previewTab = normalizePreviewTab(btn.dataset.previewTab);
+          render();
+        });
+      });
+
+      getPreviewUI().bindDrawer();
 
       main.querySelectorAll('[data-export-help]').forEach(btn => {
         btn.addEventListener('click', () => {
