@@ -8,7 +8,7 @@
         headerSubtitle: '<code>pow()</code> ベースの流動タイポグラフィ設定ツール — 参照: <a href="https://coliss.com/articles/build-websites/operation/css/fluid-modular-type-scale.html" target="_blank" rel="noopener">coliss 記事</a>',
         langJa: '日本語', langEn: 'English',
         secBaseSize: '基底フォントサイズ', secFloor: '絶対下限', secRatio: 'スケール比',
-        secViewport: 'ビューポート幅', secOther: 'その他',
+        secViewport: 'ビューポート幅', secPreviewFont: 'プレビュー字体', secOther: 'その他',
         fontSizeMin: 'SP (--font-size-min)', fontSizeMax: 'PC (--font-size-max)',
         fontSizeFloor: 'フォント下限 (--font-size-floor)',
         fontRatioMin: 'SP (--font-ratio-min)', fontRatioMax: 'PC (--font-ratio-max)',
@@ -70,13 +70,15 @@
         tokensStudioModalTitle: 'Tokens Studio への取り込み',
         tokensStudioModalNote: '<strong>注意:</strong> 出力は font-size 中心の Typography トークンです。font family は <code>Inter</code>、font weight は <code>Regular</code> のプレースホルダーです。Figma 側で書体を差し替えてください。fluid clamp は <code>description</code> に参考値として記載しています。',
         tokensStudioModalSteps: '<ol><li><strong>Tokens Studio</strong> タブで JSON を「<strong>ダウンロード</strong>」または「<strong>コピー</strong>」（<code>font-size-scaler-tokens-studio.json</code>）</li><li>Figma で <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio for Figma</a> を開く</li><li>Settings（歯車）→ <strong>Load from file</strong> で JSON を読み込む</li><li>プラグイン上部のテーマ <strong>SP</strong> / <strong>PC</strong> で Token Set を切り替える</li><li>テキストを選択 → トークン（<code>text-body</code> 等）をクリックして適用（モバイル用フレーム＝SP、PC 用フレーム＝PC）</li><li>Text Style 化する場合: Styles &amp; Variables → <strong>Export to Figma</strong> → Typography（テーマごとに Export。同名スタイルは上書きされます）</li></ol><p><strong>SP / PC について:</strong> Figma 上に切替ボタンはありません。フレームごとにテーマとスタイルを使い分けてください。実装の <code>clamp()</code> は Vanilla CSS タブが正です。</p><p>Variables Import との併用: font-size Variables は Variables Import、Text Style は Tokens Studio。</p>',
+        googleFontLabel: 'Google Fonts',
+        googleFontDefault: 'システムデフォルト',
         intLevel: '（整数なら Lv {n}）',
       },
       en: {
         headerSubtitle: 'Fluid typography configurator with <code>pow()</code> — Ref: <a href="https://coliss.com/articles/build-websites/operation/css/fluid-modular-type-scale.html" target="_blank" rel="noopener">coliss article</a>',
         langJa: '日本語', langEn: 'English',
         secBaseSize: 'Base font size', secFloor: 'Absolute floor', secRatio: 'Scale ratio',
-        secViewport: 'Viewport width', secOther: 'Other',
+        secViewport: 'Viewport width', secPreviewFont: 'Preview typeface', secOther: 'Other',
         fontSizeMin: 'SP (--font-size-min)', fontSizeMax: 'PC (--font-size-max)',
         fontSizeFloor: 'Font floor (--font-size-floor)',
         fontRatioMin: 'SP (--font-ratio-min)', fontRatioMax: 'PC (--font-ratio-max)',
@@ -138,6 +140,8 @@
         tokensStudioModalTitle: 'Import via Tokens Studio',
         tokensStudioModalNote: '<strong>Note:</strong> Output is font-size–focused Typography tokens. <code>Inter</code> / <code>Regular</code> are placeholders—swap the typeface in Figma. Fluid clamp references are in each token\'s <code>description</code>.',
         tokensStudioModalSteps: '<ol><li>On the <strong>Tokens Studio</strong> tab, <strong>Download</strong> or <strong>Copy</strong> <code>font-size-scaler-tokens-studio.json</code></li><li>In Figma, open <a href="https://www.figma.com/community/plugin/843461159747178978/tokens-studio-for-figma" target="_blank" rel="noopener">Tokens Studio for Figma</a></li><li>Settings (gear) → <strong>Load from file</strong></li><li>Switch theme <strong>SP</strong> / <strong>PC</strong> at the top of the plugin</li><li>Select text → click a token (<code>text-body</code>, etc.) to apply (mobile frames = SP, desktop frames = PC)</li><li>For Text Styles: Styles &amp; Variables → <strong>Export to Figma</strong> → Typography (export per theme; same names overwrite)</li></ol><p><strong>SP / PC:</strong> There is no toggle in Figma—use themes and styles per frame. For production <code>clamp()</code>, use the Vanilla CSS tab.</p><p>Pair with Variables Import: variables there, Text Styles here.</p>',
+        googleFontLabel: 'Google Fonts',
+        googleFontDefault: 'System default',
         intLevel: '(integer ≈ Lv {n})',
       },
     };
@@ -200,6 +204,27 @@
       { value: 1.618, ja: '黄金比', en: 'Golden Ratio' },
     ];
 
+    const GOOGLE_FONTS = [
+      { id: '', category: 'sans' },
+      { id: 'Noto Sans JP', category: 'sans' },
+      { id: 'Noto Serif JP', category: 'serif' },
+      { id: 'M PLUS 1p', category: 'sans' },
+      { id: 'Zen Kaku Gothic New', category: 'sans' },
+      { id: 'Kosugi Maru', category: 'sans' },
+      { id: 'Shippori Mincho', category: 'serif' },
+      { id: 'IBM Plex Sans JP', category: 'sans' },
+      { id: 'Inter', category: 'sans' },
+      { id: 'Roboto', category: 'sans' },
+      { id: 'Open Sans', category: 'sans' },
+      { id: 'Lato', category: 'sans' },
+      { id: 'Poppins', category: 'sans' },
+      { id: 'Source Sans 3', category: 'sans' },
+      { id: 'Merriweather', category: 'serif' },
+      { id: 'Playfair Display', category: 'serif' },
+    ];
+    const GOOGLE_FONT_IDS = new Set(GOOGLE_FONTS.map(f => f.id));
+    const GOOGLE_FONT_LINK_ID = 'google-font-preview';
+
     const WCAG = {
       bodyRecommended: 16,
       captionMin: 12,
@@ -227,6 +252,7 @@
       practicalPcA: 12,
       practicalPcB: 21,
       previewViewport: 768,
+      googleFont: '',
     };
 
     const STORAGE_KEY = 'font-size-scaler-v1';
@@ -235,9 +261,10 @@
       wm: 'fontWidthMin', wx: 'fontWidthMax', fl: 'fontSizeFloor', rb: 'remBase',
       vu: 'variableUnit', lmi: 'levelMin', lmx: 'levelMax', vw: 'previewViewport',
       spa: 'practicalSpA', spb: 'practicalSpB', pca: 'practicalPcA', pcb: 'practicalPcB',
-      lng: 'lang', tab: 'cssTab',
+      lng: 'lang', tab: 'cssTab', ff: 'googleFont',
     };
     const INT_STATE_KEYS = new Set(['fontWidthMin', 'fontWidthMax', 'remBase', 'levelMin', 'levelMax', 'previewViewport']);
+    const STRING_STATE_KEYS = new Set(['lang', 'cssTab', 'variableUnit', 'googleFont']);
     const ALLOWED_LANGS = new Set(['ja', 'en']);
     const ALLOWED_VARIABLE_UNITS = new Set(['100vi', '100cqi']);
     const MAX_LABEL_LEN = 32;
@@ -292,6 +319,55 @@
       return ALLOWED_VARIABLE_UNITS.has(unit) ? unit : DEFAULTS.variableUnit;
     }
 
+    function normalizeGoogleFont(value) {
+      if (!value || typeof value !== 'string') return '';
+      return GOOGLE_FONT_IDS.has(value) ? value : '';
+    }
+
+    function googleFontEntry(id) {
+      return GOOGLE_FONTS.find(f => f.id === id);
+    }
+
+    function googleFontOptionLabel(entry) {
+      return entry.id || t('googleFontDefault');
+    }
+
+    function googleFontCssUrl(family) {
+      const q = family.replace(/ /g, '+');
+      return `https://fonts.googleapis.com/css2?family=${q}:wght@400;700&display=swap`;
+    }
+
+    function googleFontStack(family) {
+      const entry = googleFontEntry(family);
+      const cat = entry?.category === 'serif' ? 'serif' : 'sans-serif';
+      return `'${family.replace(/'/g, '')}', ${cat}`;
+    }
+
+    function loadGoogleFontStylesheet(family) {
+      const existing = document.getElementById(GOOGLE_FONT_LINK_ID);
+      if (existing) existing.remove();
+      if (!family) return;
+      const link = document.createElement('link');
+      link.id = GOOGLE_FONT_LINK_ID;
+      link.rel = 'stylesheet';
+      link.href = googleFontCssUrl(family);
+      document.head.appendChild(link);
+    }
+
+    function previewFontFamilyStyle() {
+      if (!state.googleFont) return '';
+      return `font-family:${googleFontStack(state.googleFont)};`;
+    }
+
+    function tokensStudioFontFamily() {
+      return state.googleFont || 'Inter';
+    }
+
+    function googleFontImportPrefix() {
+      if (!state.googleFont) return '';
+      return `@import url('${googleFontCssUrl(state.googleFont)}');\n\n`;
+    }
+
     function sanitizeLabelString(value) {
       if (typeof value !== 'string') return '';
       return value
@@ -328,6 +404,7 @@
       state.variableUnit = normalizeVariableUnit(state.variableUnit);
       state.lang = normalizeLang(state.lang);
       state.cssTab = normalizeCssTab(state.cssTab);
+      state.googleFont = normalizeGoogleFont(state.googleFont);
       state.labels = sanitizeLabels(state.labels, state.levelMin, state.levelMax);
     }
 
@@ -352,6 +429,7 @@
       if (data.lang != null) out.lang = normalizeLang(data.lang);
       if (data.cssTab != null) out.cssTab = normalizeCssTab(data.cssTab);
       if (data.variableUnit != null) out.variableUnit = normalizeVariableUnit(data.variableUnit);
+      if (data.googleFont != null) out.googleFont = normalizeGoogleFont(data.googleFont);
       const levelMin = out.levelMin ?? state.levelMin ?? DEFAULTS.levelMin;
       const levelMax = out.levelMax ?? state.levelMax ?? DEFAULTS.levelMax;
       if (data.labels && typeof data.labels === 'object' && !Array.isArray(data.labels)) {
@@ -388,6 +466,7 @@
       if (clean.cssTab) state.cssTab = clean.cssTab;
       if (clean.lang) state.lang = clean.lang;
       if (clean.variableUnit) state.variableUnit = clean.variableUnit;
+      if (clean.googleFont != null) state.googleFont = clean.googleFont;
       clampStateFields();
     }
 
@@ -426,7 +505,7 @@
         const v = p.get(short);
         if (v == null || v.length > 64) return;
         if (INT_STATE_KEYS.has(key)) data[key] = parseInt(v, 10);
-        else if (key === 'lang' || key === 'cssTab' || key === 'variableUnit') data[key] = v;
+        else if (STRING_STATE_KEYS.has(key)) data[key] = v;
         else data[key] = parseFloat(v);
       });
       if (p.has('lb')) {
@@ -705,6 +784,14 @@
           </div>
         </div>
 
+        <div class="section-title">${t('secPreviewFont')}</div>
+        <div class="field">
+          <label for="googleFont">${t('googleFontLabel')}</label>
+          <select id="googleFont">
+            ${GOOGLE_FONTS.map(f => `<option value="${escapeAttr(f.id)}"${state.googleFont === f.id ? ' selected' : ''}>${escapeHtml(googleFontOptionLabel(f))}</option>`).join('')}
+          </select>
+        </div>
+
         <div class="section-title">${t('secOther')}</div>
         <div class="field-row">
           <div class="field">
@@ -824,6 +911,7 @@
       state.practicalSpB = num('practicalSpB');
       state.practicalPcA = num('practicalPcA');
       state.practicalPcB = num('practicalPcB');
+      state.googleFont = normalizeGoogleFont(document.getElementById('googleFont')?.value ?? '');
       if (state.levelMin > state.levelMax) {
         [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
       }
@@ -918,7 +1006,7 @@
         return `.${cssClassName(l)} {\n  --font-level: ${l};\n}`;
       }).join('\n\n');
 
-      return `/*
+      return `${googleFontImportPrefix()}/*
  * Fluid Modular Type Scale
  * Generated by Font Size Scaler
  * https://coliss.com/articles/build-websites/operation/css/fluid-modular-type-scale.html
@@ -1056,7 +1144,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         const px = mode === 'SP' ? effectiveSpMin(level, c) : fluidMax(level, c);
         set[cssClassName(level)] = {
           value: {
-            fontFamily: 'Inter',
+            fontFamily: tokensStudioFontFamily(),
             fontWeight: 'Regular',
             lineHeight: '150%',
             letterSpacing: '0',
@@ -1399,7 +1487,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
           <input type="number" id="previewViewportNum" min="${c.fontWidthMin}" max="${c.fontWidthMax}" value="${vw}" step="1">
           <span style="font-size:0.75rem;color:var(--text-muted)">px</span>
         </div>
-        <div id="previewBlocks">${blocks}</div>
+        <div id="previewBlocks"${previewFontFamilyStyle() ? ` style="${escapeAttr(previewFontFamilyStyle())}"` : ''}>${blocks}</div>
       </div>`;
     }
 
@@ -1546,6 +1634,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         renderCSS(c);
 
       bindMainEvents(c);
+      loadGoogleFontStylesheet(state.googleFont);
     }
 
     function bindMainEvents(c) {
