@@ -70,3 +70,26 @@ console.log('Sample Lv0:', {
   PC: sizeAtViewport(0, c.fontWidthMax, c),
   mid: sizeAtViewport(0, 768, c),
 });
+
+function effectiveSpMin(level, c) {
+  return sizeAtViewport(level, c.fontWidthMin, c);
+}
+
+function effectivePcMax(level, c) {
+  return sizeAtViewport(level, c.fontWidthMax, c);
+}
+
+for (let level = -3; level <= 9; level++) {
+  const sp = effectiveSpMin(level, c);
+  const pc = effectivePcMax(level, c);
+  const rawMin = fluidMin(level, c);
+  const rawMax = fluidMax(level, c);
+  if (pc < Math.max(sp, c.fontSizeFloor) - 0.001 && rawMin > rawMax) {
+    console.error(`FAIL Lv${level}: PC endpoint ${pc} < expected max(${sp}, floor)`);
+    failures++;
+  }
+  if (sp !== sizeAtViewport(level, c.fontWidthMin, c) || pc !== sizeAtViewport(level, c.fontWidthMax, c)) {
+    console.error(`FAIL Lv${level}: endpoint helpers mismatch`);
+    failures++;
+  }
+}

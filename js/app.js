@@ -738,7 +738,11 @@
     }
 
     function effectiveSpMin(level, c) {
-      return applyFloor(fluidMin(level, c), c);
+      return sizeAtViewport(level, c.fontWidthMin, c);
+    }
+
+    function effectivePcMax(level, c) {
+      return sizeAtViewport(level, c.fontWidthMax, c);
     }
 
     function isFloored(level, c) {
@@ -806,7 +810,7 @@
     function wcagCheckLevel(level, c) {
       const rawSp = fluidMin(level, c);
       const sp = effectiveSpMin(level, c);
-      const pc = fluidMax(level, c);
+      const pc = effectivePcMax(level, c);
       const atVw = sizeAtViewport(level, state.previewViewport, c);
       const body = wcagBodyStatus(sp);
       const largeSp = wcagLargeTextStatus(sp);
@@ -1074,7 +1078,7 @@
     }
 
     function sizeAtEndpoint(level, isSp, c) {
-      return isSp ? effectiveSpMin(level, c) : fluidMax(level, c);
+      return isSp ? effectiveSpMin(level, c) : effectivePcMax(level, c);
     }
 
     function closestIntegerLevel(targetPx, isSp, c) {
@@ -1230,7 +1234,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
     function buildFigmaModeTokens(c, mode) {
       const group = {};
       for (const level of levelsRange()) {
-        const px = mode === 'SP' ? effectiveSpMin(level, c) : fluidMax(level, c);
+        const px = mode === 'SP' ? effectiveSpMin(level, c) : effectivePcMax(level, c);
         const key = cssSlug(level);
         group[key] = {
           $type: 'dimension',
@@ -1274,7 +1278,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
     function buildTokensStudioTypographySet(c, mode) {
       const set = {};
       for (const level of levelsRange()) {
-        const px = mode === 'SP' ? effectiveSpMin(level, c) : fluidMax(level, c);
+        const px = mode === 'SP' ? effectiveSpMin(level, c) : effectivePcMax(level, c);
         set[cssClassName(level)] = {
           value: {
             fontFamily: tokensStudioFontFamily(),
@@ -1533,7 +1537,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
       levels.forEach((level, i) => {
         const rawSp = fluidMin(level, c);
         const sp = effectiveSpMin(level, c);
-        const pc = fluidMax(level, c);
+        const pc = effectivePcMax(level, c);
         const atVw = sizeAtViewport(level, vw, c);
         const prevLevel = i > 0 ? levels[i - 1] : null;
         const jump = jumpAtPreview(level, prevLevel, c, vw);
