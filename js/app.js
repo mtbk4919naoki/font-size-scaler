@@ -17,28 +17,28 @@
         remBase: 'rem 換算基準 (px)', variableUnit: '--variable-unit',
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: '表示レベル min', levelMax: '表示レベル max',
-        secPractical: '実用チェック',
-        practicalSpA: 'SP A (px)', practicalSpB: 'SP B (px)',
-        practicalPcA: 'PC A (px)', practicalPcB: 'PC B (px)',
-        practicalIntro: '各目標 px で SP / PC 端それぞれの最接近レベル ±1 段階を表示。差分は px / %（±5% 以上で赤字）。',
-        colCheck: 'チェック', colBelow: '1つ下', colNearest: '最接近', colAbove: '1つ上',
+        secTargetSize: '目標サイズ',
+        targetSp1: 'SP 1 (px)', targetSp2: 'SP 2 (px)', targetSp3: 'SP 3 (px)',
+        targetPc1: 'PC 1 (px)', targetPc2: 'PC 2 (px)', targetPc3: 'PC 3 (px)',
+        targetIntro: '各目標 px に SP / PC 端点で最接近するレベルにバッジ表示。',
+        colTarget: '目標',
+        tipTarget: 'SP / PC 端点の目標 px に最接近するレベル（サイドバーで設定）。',
+        targetNote: '目標列: 各 px を SP/PC 端点サイズに最接近するレベルに表示。Lv0 (SP) = {size}。',
         btnSave: 'ブラウザに保存', btnShare: '共有URLをコピー', btnReset: '初期状態に戻す',
         saved: '保存しました', shared: 'URL をコピーしました', resetDone: '初期状態に戻しました',
         classCopied: 'コピーしました',
         colCss: 'CSS',
         tipColCss: '用途ラベルから生成したクラス名（text-*）をクリップボードにコピー。',
         scaleTable: 'スケール表',
-        scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — ジャンプ率はプレビュー幅（{vw}px）での前レベルからの倍率。絶対下限 {floor}px 未満はクランプ。',
         colLevel: 'レベル', colUsage: '用途', colSp: 'SP', colPc: 'PC',
-        colJump: 'ジャンプ率', colNotes: '備考',
+        colJump: 'ジャンプ率',
         tipLevel: 'モジュラースケールの段階。0 = 基底、正 = 大きい、負 = 小さい。',
         tipUsage: 'CSS クラス名などに使う用途ラベル。編集可能。',
         tipSp: '最小ビューポート ({vw}px) 時の clamp 下限。絶対下限 {floor}px を適用後。',
         tipPc: '最大ビューポート ({vw}px) 時の clamp 上限。',
         tipPreview: 'プレビュー中のビューポート ({vw}px) での実際の font-size。',
         tipJump: 'プレビュー幅 ({vw}px) でのひとつ下のレベルからの倍率。',
-        tipNotes: 'WCAG 判定、下限クランプ、目標本文サイズに近いレベルなど。',
-        badgeFloor: '下限', badgeTarget: '≈{px}px',
+        badgeFloor: '下限',
         floorTitle: '計算値 {raw}',
         previewTitle: 'タイポグラフィプレビュー', previewViewport: 'ビューポート',
         previewTabList: '一覧', previewTabSample: 'サンプル',
@@ -92,20 +92,12 @@
         sampleFooterLink: 'リンク項目',
         sampleFooterCopy: '© 2026 Acme Docs',
         previewSample: 'あいうえお The quick brown fox — {label}',
-        wcagTitle: 'WCAG アクセシビリティチェック',
-        wcagNote: 'WCAG は px 固定の最小フォントを規定しませんが、本文 <strong>16px 推奨</strong>（1.4.4）。大文字 AA: ≥24px（太字 ≥19px）で 3:1（1.4.3）。AAA 大文字: ≥18.67px 太字 / ≥24px で 4.5:1（1.4.6）。(SP) は下限 {floor}px 適用後。{vw}px 列はプレビュー幅でのサイズ。200% 列は ×2。',
-        wcagColSp: '(SP)', wcagColPreview: '{vw}px', wcagColBody: '本文 16px',
-        wcagColType: '文字種別 (AA)', wcagCol200: '200% 時',
-        tipWcagBody: '16px 以上が本文として推奨。12px 未満は注釈用途に限定。',
-        tipWcagType: '大文字 (≥24px / 太字 ≥19px) は AA コントラスト 3:1。通常文字は 4.5:1。',
-        tipWcag200: '1.4.4 目安: ブラウザ 200% 拡大時のサイズ（プレビュー列 ×2）。',
+        wcagNote: 'WCAG: 本文 <strong>16px 推奨</strong>（1.4.4）。大文字 AA ≥24px / 太字 ≥19px（3:1）、AAA ≥24px / 太字 ≥18.67px（4.5:1）。WCAG 列は SP サイズ基準。',
+        colWcag: 'WCAG',
+        tipWcag: '本文 16px 判定と大文字 AA/AAA 区分（SP 端点サイズ基準）。',
         wcagBodyOk: 'AA 推奨', wcagBodySmall: 'やや小', wcagBodyCaption: '注釈向け',
         wcagBodyCheck: '要確認', wcagBodyFail: '非推奨',
         wcagLargeAaa: '大文字 AAA', wcagLargeAa: '大文字 AA', wcagNormal: '通常文字',
-        wcagNormalShort: '通常 (4.5:1)',
-        practicalTitle: '実用チェック',
-        practicalLv0Note: 'Lv0 (SP) = {size}。',
-        practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'これより小さい字は Lv < 0',
         cssTitle: 'CSS / Figma 出力', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
         cssFigmaVars: 'Variables Import', cssTokensStudio: 'Tokens Studio',
         copy: 'コピー', copied: 'コピー済', btnDownload: 'ダウンロード', downloaded: '保存しました',
@@ -135,28 +127,28 @@
         remBase: 'rem base (px)', variableUnit: '--variable-unit',
         unitVi: '100vi (viewport)', unitCqi: '100cqi (container)',
         levelMin: 'Display level min', levelMax: 'Display level max',
-        secPractical: 'Practical check',
-        practicalSpA: 'SP A (px)', practicalSpB: 'SP B (px)',
-        practicalPcA: 'PC A (px)', practicalPcB: 'PC B (px)',
-        practicalIntro: 'Nearest integer level ±1 step at each SP / PC endpoint. Diff shown as px / % (red when ±5% or more).',
-        colCheck: 'Check', colBelow: 'Below', colNearest: 'Nearest', colAbove: 'Above',
+        secTargetSize: 'Target sizes',
+        targetSp1: 'SP 1 (px)', targetSp2: 'SP 2 (px)', targetSp3: 'SP 3 (px)',
+        targetPc1: 'PC 1 (px)', targetPc2: 'PC 2 (px)', targetPc3: 'PC 3 (px)',
+        targetIntro: 'Badge on the nearest level to each SP/PC endpoint target px.',
+        colTarget: 'Target',
+        tipTarget: 'Nearest level at SP/PC endpoint for sidebar target px values.',
+        targetNote: 'Target column: nearest level per px at SP/PC endpoints. Lv0 (SP) = {size}.',
         btnSave: 'Save to browser', btnShare: 'Copy share URL', btnReset: 'Reset to defaults',
         saved: 'Saved', shared: 'URL copied', resetDone: 'Reset to defaults',
         classCopied: 'Copied',
         colCss: 'CSS',
         tipColCss: 'Copy the utility class name (text-*) from the usage label.',
         scaleTable: 'Scale table',
-        scaleNote: '<strong>pow()</strong>: base × ratio<sup>level</sup> — jump rate is the ratio from the previous level at the preview width ({vw}px). Values below {floor}px are clamped.',
         colLevel: 'Level', colUsage: 'Usage', colSp: 'SP', colPc: 'PC',
-        colJump: 'Jump', colNotes: 'Notes',
+        colJump: 'Jump',
         tipLevel: 'Modular scale step. 0 = base, positive = larger, negative = smaller.',
         tipUsage: 'Usage label for CSS class names. Editable.',
         tipSp: 'clamp minimum at min viewport ({vw}px), after {floor}px floor.',
         tipPc: 'clamp maximum at max viewport ({vw}px).',
         tipPreview: 'Computed font-size at preview viewport ({vw}px).',
         tipJump: 'Ratio from the previous level at preview width ({vw}px).',
-        tipNotes: 'WCAG status, floor clamp, level nearest target body size, etc.',
-        badgeFloor: 'floor', badgeTarget: '≈{px}px',
+        badgeFloor: 'floor',
         floorTitle: 'Computed {raw}',
         previewTitle: 'Typography preview', previewViewport: 'Viewport',
         previewTabList: 'List', previewTabSample: 'Sample',
@@ -210,20 +202,12 @@
         sampleFooterLink: 'Link item',
         sampleFooterCopy: '© 2026 Acme Docs',
         previewSample: 'The quick brown fox — {label}',
-        wcagTitle: 'WCAG accessibility check',
-        wcagNote: 'WCAG does not mandate a minimum px size; <strong>16px body</strong> is recommended (1.4.4). Large AA: ≥24px (bold ≥19px) at 3:1 (1.4.3). AAA large: ≥18.67px bold / ≥24px at 4.5:1 (1.4.6). (SP) after {floor}px floor. {vw}px column = size at preview width. 200% = ×2.',
-        wcagColSp: '(SP)', wcagColPreview: '{vw}px', wcagColBody: 'Body 16px',
-        wcagColType: 'Text type (AA)', wcagCol200: 'At 200%',
-        tipWcagBody: '16px+ recommended for body. Below 12px suits captions only.',
-        tipWcagType: 'Large text (≥24px / bold ≥19px) uses 3:1 AA contrast. Normal text uses 4.5:1.',
-        tipWcag200: '1.4.4 guide: size at 200% browser zoom (preview column ×2).',
+        wcagNote: 'WCAG: <strong>16px body</strong> recommended (1.4.4). Large AA ≥24px / bold ≥19px (3:1), AAA ≥24px / bold ≥18.67px (4.5:1). WCAG column uses SP endpoint size.',
+        colWcag: 'WCAG',
+        tipWcag: '16px body guidance and large-text AA/AAA (based on SP endpoint size).',
         wcagBodyOk: 'AA OK', wcagBodySmall: 'Slightly small', wcagBodyCaption: 'Caption',
         wcagBodyCheck: 'Review', wcagBodyFail: 'Not recommended',
         wcagLargeAaa: 'Large AAA', wcagLargeAa: 'Large AA', wcagNormal: 'Normal',
-        wcagNormalShort: 'Normal (4.5:1)',
-        practicalTitle: 'Practical check',
-        practicalLv0Note: 'Lv0 (SP) = {size}.',
-        practicalLv0Sp: 'Lv0 (SP)', practicalLv0Hint: 'Smaller text uses Lv < 0',
         cssTitle: 'CSS / Figma export', cssVanilla: 'Vanilla CSS', cssTailwind: 'Tailwind v4',
         cssFigmaVars: 'Variables Import', cssTokensStudio: 'Tokens Studio',
         copy: 'Copy', copied: 'Copied', btnDownload: 'Download', downloaded: 'Downloaded',
@@ -351,10 +335,12 @@
       variableUnit: '100vi',
       levelMin: -3,
       levelMax: 9,
-      practicalSpA: 10,
-      practicalSpB: 18,
-      practicalPcA: 12,
-      practicalPcB: 21,
+      targetSp1: 10,
+      targetSp2: 18,
+      targetSp3: 26,
+      targetPc1: 10,
+      targetPc2: 21,
+      targetPc3: 38,
       previewViewport: 768,
       googleFont: '',
       previewTab: 'list',
@@ -365,7 +351,9 @@
       sm: 'fontSizeMin', sx: 'fontSizeMax', rm: 'fontRatioMin', rx: 'fontRatioMax',
       wm: 'fontWidthMin', wx: 'fontWidthMax', fl: 'fontSizeFloor', rb: 'remBase',
       vu: 'variableUnit', lmi: 'levelMin', lmx: 'levelMax', vw: 'previewViewport',
-      spa: 'practicalSpA', spb: 'practicalSpB', pca: 'practicalPcA', pcb: 'practicalPcB',
+      sp1: 'targetSp1', sp2: 'targetSp2', sp3: 'targetSp3',
+      pc1: 'targetPc1', pc2: 'targetPc2', pc3: 'targetPc3',
+      spa: 'targetSp1', spb: 'targetSp2', pca: 'targetPc1', pcb: 'targetPc2',
       lng: 'lang', tab: 'cssTab', ff: 'googleFont', ptab: 'previewTab',
     };
     const INT_STATE_KEYS = new Set(['fontWidthMin', 'fontWidthMax', 'remBase', 'levelMin', 'levelMax', 'previewViewport']);
@@ -391,10 +379,12 @@
       levelMin: { min: -6, max: 10 },
       levelMax: { min: -6, max: 12 },
       previewViewport: { min: 240, max: 2560 },
-      practicalSpA: { min: 6, max: 72 },
-      practicalSpB: { min: 6, max: 72 },
-      practicalPcA: { min: 6, max: 72 },
-      practicalPcB: { min: 6, max: 72 },
+      targetSp1: { min: 6, max: 72 },
+      targetSp2: { min: 6, max: 72 },
+      targetSp3: { min: 6, max: 72 },
+      targetPc1: { min: 6, max: 72 },
+      targetPc2: { min: 6, max: 72 },
+      targetPc3: { min: 6, max: 72 },
     };
 
     function escapeHtml(s) {
@@ -542,12 +532,21 @@
       if (data.labels && typeof data.labels === 'object' && !Array.isArray(data.labels)) {
         out.labels = sanitizeLabels(data.labels, levelMin, levelMax);
       }
-      if (data.practicalTarget1 != null && data.practicalSpA == null) {
-        out.practicalSpA = clampFiniteNumber(data.practicalTarget1, 6, 72, DEFAULTS.practicalSpA);
+      if (data.practicalTarget1 != null && data.targetSp1 == null) {
+        out.targetSp1 = clampFiniteNumber(data.practicalTarget1, 6, 72, DEFAULTS.targetSp1);
       }
-      if (data.practicalTarget2 != null && data.practicalPcA == null) {
-        out.practicalPcA = clampFiniteNumber(data.practicalTarget2, 6, 72, DEFAULTS.practicalPcA);
+      if (data.practicalTarget2 != null && data.targetPc1 == null) {
+        out.targetPc1 = clampFiniteNumber(data.practicalTarget2, 6, 72, DEFAULTS.targetPc1);
       }
+      const legacyTargets = [
+        ['practicalSpA', 'targetSp1'], ['practicalSpB', 'targetSp2'],
+        ['practicalPcA', 'targetPc1'], ['practicalPcB', 'targetPc2'],
+      ];
+      legacyTargets.forEach(([oldKey, newKey]) => {
+        if (data[oldKey] != null && out[newKey] == null) {
+          out[newKey] = clampFiniteNumber(data[oldKey], 6, 72, DEFAULTS[newKey]);
+        }
+      });
       return out;
     }
 
@@ -811,7 +810,7 @@
       const isLargeAAA = bold ? px >= WCAG.largeTextAAABold : px >= WCAG.largeTextAAA;
       if (isLargeAAA) return { label: t('wcagLargeAaa'), badge: 'badge-aaa', contrast: '4.5:1' };
       if (isLargeAA) return { label: t('wcagLargeAa'), badge: 'badge-aa', contrast: '3:1' };
-      return { label: t('wcagNormal'), badge: '', contrast: '4.5:1 (AA)' };
+      return { label: t('wcagNormal'), badge: 'badge-normal', contrast: '4.5:1 (AA)' };
     }
 
     function wcagCheckLevel(level, c) {
@@ -822,8 +821,13 @@
       const body = wcagBodyStatus(sp);
       const largeSp = wcagLargeTextStatus(sp);
       const largePc = wcagLargeTextStatus(pc);
-      const zoom200 = atVw * 2;
-      return { rawSp, sp, pc, atVw, body, largeSp, largePc, zoom200, floored: rawSp < c.fontSizeFloor };
+      return { rawSp, sp, pc, atVw, body, largeSp, largePc, floored: rawSp < c.fontSizeFloor };
+    }
+
+    function renderWcagCell(w) {
+      const parts = [`<span class="badge ${w.body.badge}">${w.body.label}</span>`];
+      parts.push(`<span class="badge ${w.largeSp.badge}">${w.largeSp.label}</span>`);
+      return parts.join(' ');
     }
 
     function levelsRange() {
@@ -956,25 +960,33 @@
             <input type="number" id="levelMax" value="${state.levelMax}" min="-6" max="12" step="1">
           </div>
         </div>
-        <div class="section-title">${t('secPractical')}</div>
-        <div class="field-row">
+        <div class="section-title">${t('secTargetSize')}</div>
+        <div class="field-row field-row-3">
           <div class="field">
-            <label for="practicalSpA">${t('practicalSpA')}</label>
-            <input type="number" id="practicalSpA" value="${state.practicalSpA}" min="6" max="72" step="0.5">
+            <label for="targetSp1">${t('targetSp1')}</label>
+            <input type="number" id="targetSp1" value="${state.targetSp1}" min="6" max="72" step="0.5">
           </div>
           <div class="field">
-            <label for="practicalSpB">${t('practicalSpB')}</label>
-            <input type="number" id="practicalSpB" value="${state.practicalSpB}" min="6" max="72" step="0.5">
+            <label for="targetSp2">${t('targetSp2')}</label>
+            <input type="number" id="targetSp2" value="${state.targetSp2}" min="6" max="72" step="0.5">
+          </div>
+          <div class="field">
+            <label for="targetSp3">${t('targetSp3')}</label>
+            <input type="number" id="targetSp3" value="${state.targetSp3}" min="6" max="72" step="0.5">
           </div>
         </div>
-        <div class="field-row">
+        <div class="field-row field-row-3">
           <div class="field">
-            <label for="practicalPcA">${t('practicalPcA')}</label>
-            <input type="number" id="practicalPcA" value="${state.practicalPcA}" min="6" max="72" step="0.5">
+            <label for="targetPc1">${t('targetPc1')}</label>
+            <input type="number" id="targetPc1" value="${state.targetPc1}" min="6" max="72" step="0.5">
           </div>
           <div class="field">
-            <label for="practicalPcB">${t('practicalPcB')}</label>
-            <input type="number" id="practicalPcB" value="${state.practicalPcB}" min="6" max="72" step="0.5">
+            <label for="targetPc2">${t('targetPc2')}</label>
+            <input type="number" id="targetPc2" value="${state.targetPc2}" min="6" max="72" step="0.5">
+          </div>
+          <div class="field">
+            <label for="targetPc3">${t('targetPc3')}</label>
+            <input type="number" id="targetPc3" value="${state.targetPc3}" min="6" max="72" step="0.5">
           </div>
         </div>
       `;
@@ -1047,10 +1059,12 @@
       state.variableUnit = document.getElementById('variableUnit').value;
       state.levelMin = int('levelMin');
       state.levelMax = int('levelMax');
-      state.practicalSpA = num('practicalSpA');
-      state.practicalSpB = num('practicalSpB');
-      state.practicalPcA = num('practicalPcA');
-      state.practicalPcB = num('practicalPcB');
+      state.targetSp1 = num('targetSp1');
+      state.targetSp2 = num('targetSp2');
+      state.targetSp3 = num('targetSp3');
+      state.targetPc1 = num('targetPc1');
+      state.targetPc2 = num('targetPc2');
+      state.targetPc3 = num('targetPc3');
       state.googleFont = normalizeGoogleFont(document.getElementById('googleFont')?.value ?? '');
       if (state.levelMin > state.levelMax) {
         [state.levelMin, state.levelMax] = [state.levelMax, state.levelMin];
@@ -1058,12 +1072,14 @@
       clampStateFields();
     }
 
-    function getPracticalChecks() {
+    function getTargetSizeChecks() {
       return [
-        { id: 'spa', label: 'SP A', px: state.practicalSpA, isSp: true },
-        { id: 'spb', label: 'SP B', px: state.practicalSpB, isSp: true },
-        { id: 'pca', label: 'PC A', px: state.practicalPcA, isSp: false },
-        { id: 'pcb', label: 'PC B', px: state.practicalPcB, isSp: false },
+        { id: 'sp1', label: `SP ${fmt(state.targetSp1, 1)}`, px: state.targetSp1, isSp: true, badgeClass: 'target-badge target-a target-sp' },
+        { id: 'sp2', label: `SP ${fmt(state.targetSp2, 1)}`, px: state.targetSp2, isSp: true, badgeClass: 'target-badge target-b target-sp' },
+        { id: 'sp3', label: `SP ${fmt(state.targetSp3, 1)}`, px: state.targetSp3, isSp: true, badgeClass: 'target-badge target-c target-sp' },
+        { id: 'pc1', label: `PC ${fmt(state.targetPc1, 1)}`, px: state.targetPc1, isSp: false, badgeClass: 'target-badge target-a target-pc' },
+        { id: 'pc2', label: `PC ${fmt(state.targetPc2, 1)}`, px: state.targetPc2, isSp: false, badgeClass: 'target-badge target-b target-pc' },
+        { id: 'pc3', label: `PC ${fmt(state.targetPc3, 1)}`, px: state.targetPc3, isSp: false, badgeClass: 'target-badge target-c target-pc' },
       ].filter(ch => ch.px > 0);
     }
 
@@ -1091,41 +1107,22 @@
       };
     }
 
-    function neighborLevels(centerLevel) {
-      return [centerLevel - 1, centerLevel, centerLevel + 1];
+    function formatTargetDiffPx(size, targetPx) {
+      const diff = size - targetPx;
+      if (Math.abs(diff) < 0.05) return '';
+      return ` ${(diff >= 0 ? '+' : '')}${fmt(diff, 1)}px`;
     }
 
-    function formatTargetDiff(size, targetPx) {
-      const absDiff = size - targetPx;
-      const pctDiff = targetPx !== 0 ? (absDiff / targetPx) * 100 : 0;
-      const absStr = (absDiff >= 0 ? '+' : '') + fmt(absDiff, 1) + 'px';
-      const pctStr = (pctDiff >= 0 ? '+' : '') + fmt(pctDiff, 1) + '%';
-      const warn = Math.abs(pctDiff) >= 5;
-      return `<span class="cell-diff${warn ? ' cell-diff-warn' : ''}">${absStr} · ${pctStr}</span>`;
-    }
-
-    function formatNeighborCell(level, targetPx, centerLevel, c, isSp) {
-      const size = sizeAtEndpoint(level, isSp, c);
-      const isCenter = level === centerLevel;
-      return `<td class="cell-neighbor${isCenter ? ' highlight-cell' : ''}">
-        <strong>Lv ${level}</strong>
-        <span class="cell-muted">${escapeHtml(getLabel(level))}</span>
-        ${fmtPx(size)}
-        ${formatTargetDiff(size, targetPx)}
-      </td>`;
-    }
-
-    function renderPracticalRow(check, c) {
-      const { label, px, isSp } = check;
-      const closest = closestIntegerLevel(px, isSp, c);
-      const levels = neighborLevels(closest.level);
-      const endpoint = isSp ? 'SP' : 'PC';
-      return `<tr>
-        <td><strong>${label}</strong><br><span class="cell-muted">${endpoint} · ${fmtPx(px)}</span></td>
-        ${formatNeighborCell(levels[0], px, closest.level, c, isSp)}
-        ${formatNeighborCell(levels[1], px, closest.level, c, isSp)}
-        ${formatNeighborCell(levels[2], px, closest.level, c, isSp)}
-      </tr>`;
+    function renderTargetCell(level, checks, c) {
+      const badges = checks
+        .map(ch => {
+          const closest = closestIntegerLevel(ch.px, ch.isSp, c);
+          if (closest.level !== level) return '';
+          return `<span class="badge ${ch.badgeClass}">${ch.label}${formatTargetDiffPx(closest.size, ch.px)}</span>`;
+        })
+        .filter(Boolean)
+        .join(' ');
+      return badges || '—';
     }
 
     // --- CSS export ---
@@ -1539,7 +1536,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
 
     function renderScaleTable(c) {
       const levels = levelsRange();
-      const checks = getPracticalChecks();
+      const checks = getTargetSizeChecks();
       const vw = state.previewViewport;
 
       let rows = '';
@@ -1556,14 +1553,6 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
 
         let rowClass = '';
         const wcag = wcagCheckLevel(level, c);
-        let notes = `<span class="badge ${wcag.body.badge}">${wcag.body.label}</span>`;
-        if (wcag.largeSp.badge) notes += ` <span class="badge ${wcag.largeSp.badge}">${wcag.largeSp.label}</span>`;
-        if (isFloored(level, c)) notes += ` <span class="badge badge-warn">${t('badgeFloor')}</span>`;
-        checks.forEach(({ label, px, isSp }) => {
-          if (closestIntegerLevel(px, isSp, c).level === level) {
-            notes += ` <span class="badge badge-ok">${label} ${t('badgeTarget', { px })}</span>`;
-          }
-        });
         if (sp < WCAG.absoluteMin) rowClass = 'danger-row';
         else if (sp < WCAG.captionMin) rowClass = rowClass || 'warn-row';
 
@@ -1574,7 +1563,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
           <td>${fmtPx(pc)}</td>
           <td>${fmtPx(atVw)}</td>
           <td>${jump}</td>
-          <td>${notes}</td>
+          <td>${renderWcagCell(wcag)}</td>
+          <td>${renderTargetCell(level, checks, c)}</td>
           <td><button type="button" class="class-copy-btn" data-class="${escapeAttr(cssClassName(level))}" title="${escapeAttr(cssClassName(level))}">${ICONS.copy}<span>CSS</span></button></td>
         </tr>`;
       });
@@ -1586,7 +1576,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         thTip(t('colPc'), t('tipPc', { vw: c.fontWidthMax })),
         thTip(`${vw}px`, t('tipPreview', { vw })),
         thTip(t('colJump'), t('tipJump', { vw })),
-        thTip(t('colNotes'), t('tipNotes')),
+        thTip(t('colWcag'), t('tipWcag')),
+        thTip(t('colTarget'), t('tipTarget')),
         thTip(t('colCss'), t('tipColCss')),
       ];
 
@@ -1595,10 +1586,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
           <h2>${t('scaleTable')}</h2>
           <span id="scaleToast" class="toast scale-toast"></span>
         </div>
-        <p class="compare-note">${t('scaleNote', {
-          vw,
-          floor: c.fontSizeFloor,
-        })}</p>
+        <p class="compare-note">${t('wcagNote', { floor: c.fontSizeFloor, vw })}</p>
+        <p class="compare-note">${t('targetNote', { size: fmtPx(effectiveSpMin(0, c)) })} ${t('targetIntro')}</p>
         <table id="scaleTable">
           <thead><tr>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead>
           <tbody>${rows}</tbody>
@@ -1683,80 +1672,6 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         const level = parseInt(el.dataset.previewLevel, 10);
         el.style.fontSize = sizeAtViewport(level, state.previewViewport, c) + 'px';
       });
-
-      const wcagHdr = document.querySelector('#wcagTable thead th:nth-child(4)');
-      if (wcagHdr) wcagHdr.textContent = `${state.previewViewport}px`;
-      document.querySelectorAll('#wcagTable tbody tr').forEach((row, i) => {
-        const level = levelsRange()[i];
-        if (level == null) return;
-        const w = wcagCheckLevel(level, c);
-        const cells = row.querySelectorAll('td');
-        if (cells[3]) cells[3].textContent = fmtPx(w.atVw);
-        if (cells[4]) cells[4].innerHTML = `<span class="badge ${w.body.badge}">${w.body.label}</span>`;
-        if (cells[5]) cells[5].innerHTML = w.largeSp.badge
-          ? `<span class="badge ${w.largeSp.badge}">${w.largeSp.label}</span>`
-          : t('wcagNormalShort');
-        if (cells[6]) cells[6].textContent = fmtPx(w.zoom200);
-      });
-    }
-
-    function renderWCAG(c) {
-      const levels = levelsRange();
-      const vw = state.previewViewport;
-      const rows = levels.map(level => {
-        const w = wcagCheckLevel(level, c);
-        const largeCell = w.largeSp.badge
-          ? `<span class="badge ${w.largeSp.badge}">${w.largeSp.label}</span> <small>(${w.largeSp.contrast})</small>`
-          : `${t('wcagNormal')} <small>(${w.largeSp.contrast})</small>`;
-        return `<tr>
-          <td>${level}</td>
-          <td>${escapeHtml(getLabel(level))}</td>
-          <td>${fmtPx(w.sp)}</td>
-          <td>${fmtPx(w.atVw)}</td>
-          <td><span class="badge ${w.body.badge}">${w.body.label}</span></td>
-          <td>${largeCell}</td>
-          <td>${fmtPx(w.zoom200)}</td>
-        </tr>`;
-      }).join('');
-
-      const heads = [
-        thTip(t('colLevel'), t('tipLevel')),
-        thTip(t('colUsage'), t('tipUsage')),
-        thTip(t('wcagColSp'), t('tipSp', { vw: c.fontWidthMin, floor: c.fontSizeFloor })),
-        thTip(t('wcagColPreview', { vw }), t('tipPreview', { vw })),
-        thTip(t('wcagColBody'), t('tipWcagBody')),
-        thTip(t('wcagColType'), t('tipWcagType')),
-        thTip(t('wcagCol200'), t('tipWcag200')),
-      ];
-
-      return `<div class="card">
-        <h2>${t('wcagTitle')}</h2>
-        <p class="compare-note">${t('wcagNote', { floor: c.fontSizeFloor, vw })}</p>
-        <table id="wcagTable">
-          <thead><tr>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-    }
-
-    function renderPractical(c) {
-      const level0sp = effectiveSpMin(0, c);
-      const checks = getPracticalChecks();
-      const rows = checks.map(ch => renderPracticalRow(ch, c)).join('');
-
-      return `<div class="card">
-        <h2>${t('practicalTitle')}</h2>
-        <p class="compare-note">${t('practicalIntro')} ${t('practicalLv0Note', { size: fmtPx(level0sp) })} ${t('practicalLv0Hint')}</p>
-        <table class="table-compact">
-          <thead><tr>
-            <th>${t('colCheck')}</th>
-            <th>${t('colBelow')}</th>
-            <th>${t('colNearest')}</th>
-            <th>${t('colAbove')}</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
     }
 
     function renderCSS(c) {
@@ -1793,8 +1708,6 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
       main.innerHTML =
         renderScaleTable(c) +
         renderPreview(c) +
-        renderWCAG(c) +
-        renderPractical(c) +
         renderCSS(c);
 
       bindMainEvents(c);
