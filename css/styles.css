@@ -453,21 +453,9 @@
       line-height: 1.35;
     }
 
-    .ps-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .ps-header-start {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      min-width: 0;
+    .ps-main-toolbar {
+      display: none;
+      margin-bottom: 0.35rem;
     }
 
     .ps-menu-btn {
@@ -497,20 +485,6 @@
 
     .ps-drawer-backdrop {
       display: none;
-    }
-
-    .ps-logo {
-      font-weight: 700;
-      letter-spacing: 0.01em;
-    }
-
-    .ps-header-actions {
-      display: flex;
-      gap: 0.75rem;
-    }
-
-    .ps-header-link {
-      color: var(--text-muted);
     }
 
     .ps-shell {
@@ -846,6 +820,10 @@
     }
 
     @container preview-vp (max-width: 638px) {
+      .ps-main-toolbar {
+        display: flex;
+      }
+
       .ps-menu-btn {
         display: inline-flex;
       }

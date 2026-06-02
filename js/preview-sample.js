@@ -52,16 +52,6 @@ window.FSSPreviewSample = (function () {
       ).join('');
 
       return `<div class="preview-sample"${wrapAttr}>
-        <header class="ps-header">
-          <div class="ps-header-start">
-            <button type="button" class="ps-menu-btn" id="psMenuBtn" aria-expanded="false" aria-controls="psSidebar" aria-label="${escapeAttr(t('sampleMenuOpen'))}">${ICONS.menu}</button>
-            ${pst(5, c, vw, 'span', 'ps-logo', t('sampleBrand'))}
-          </div>
-          <div class="ps-header-actions">
-            ${pst(-1, c, vw, 'span', 'ps-header-link', t('sampleHeaderSearch'))}
-          </div>
-        </header>
-
         <div class="ps-shell">
           <div class="ps-drawer-backdrop" id="psDrawerBackdrop" hidden></div>
           <aside class="ps-sidebar" id="psSidebar" aria-label="Sidebar">
@@ -84,6 +74,9 @@ window.FSSPreviewSample = (function () {
           </aside>
 
           <div class="ps-main">
+            <div class="ps-main-toolbar">
+              <button type="button" class="ps-menu-btn" id="psMenuBtn" aria-expanded="false" aria-controls="psSidebar" aria-label="${escapeAttr(t('sampleMenuOpen'))}">${ICONS.menu}</button>
+            </div>
             ${pst(-3, c, vw, 'p', 'ps-breadcrumb', t('sampleBreadcrumb'))}
             ${pst(5, c, vw, 'h1', 'ps-page-title', t('samplePageTitle'))}
             ${pst(1, c, vw, 'p', 'ps-page-lead', t('samplePageLead'))}
