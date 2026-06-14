@@ -261,7 +261,84 @@
     }
 
     function thTip(label, tip) {
-      return `<span class="th-inner">${label}<span class="tip-icon" data-tip="${escapeAttr(tip)}" tabindex="0" role="note">ⓘ</span></span>`;
+      return `<span class="th-inner">${label}<span class="tip-icon" data-tip="${escapeAttr(tip)}" tabindex="0" role="button" aria-label="${escapeAttr(tip)}">ⓘ</span></span>`;
+    }
+
+    let scaleTipActiveIcon = null;
+
+    function ensureScaleTipPopover() {
+      let pop = document.getElementById('scaleTipPopover');
+      if (!pop) {
+        pop = document.createElement('div');
+        pop.id = 'scaleTipPopover';
+        pop.className = 'scale-tip-popover';
+        pop.setAttribute('role', 'tooltip');
+        pop.hidden = true;
+        document.body.appendChild(pop);
+        window.addEventListener('scroll', hideScaleTip, { passive: true, capture: true });
+        window.addEventListener('resize', () => {
+          if (scaleTipActiveIcon) positionScaleTipPopover(scaleTipActiveIcon);
+          else hideScaleTip();
+        });
+      }
+      return pop;
+    }
+
+    function positionScaleTipPopover(icon) {
+      const pop = ensureScaleTipPopover();
+      const gap = 6;
+      const margin = 8;
+      const ir = icon.getBoundingClientRect();
+      pop.hidden = false;
+      pop.style.left = '0px';
+      pop.style.top = '0px';
+      const pr = pop.getBoundingClientRect();
+      let left = ir.left + (ir.width - pr.width) / 2;
+      let top = ir.top - pr.height - gap;
+      left = Math.max(margin, Math.min(left, window.innerWidth - pr.width - margin));
+      if (top < margin) top = ir.bottom + gap;
+      pop.style.left = `${Math.round(left)}px`;
+      pop.style.top = `${Math.round(top)}px`;
+    }
+
+    function showScaleTip(icon) {
+      const text = icon.getAttribute('data-tip');
+      if (!text) return;
+      scaleTipActiveIcon = icon;
+      const pop = ensureScaleTipPopover();
+      pop.textContent = text;
+      icon.setAttribute('aria-describedby', 'scaleTipPopover');
+      requestAnimationFrame(() => positionScaleTipPopover(icon));
+    }
+
+    function hideScaleTip() {
+      scaleTipActiveIcon = null;
+      const pop = document.getElementById('scaleTipPopover');
+      if (pop) pop.hidden = true;
+      document.querySelectorAll('#scaleTable .tip-icon[aria-describedby]').forEach(el => {
+        el.removeAttribute('aria-describedby');
+      });
+    }
+
+    function bindScaleTableTips() {
+      ensureScaleTipPopover();
+      document.querySelectorAll('#scaleTable .tip-icon').forEach(icon => {
+        if (icon.dataset.tipBound) return;
+        icon.dataset.tipBound = '1';
+        icon.addEventListener('mouseenter', () => showScaleTip(icon));
+        icon.addEventListener('focus', () => showScaleTip(icon));
+        icon.addEventListener('mouseleave', () => {
+          if (scaleTipActiveIcon === icon) hideScaleTip();
+        });
+        icon.addEventListener('blur', () => {
+          if (scaleTipActiveIcon === icon) hideScaleTip();
+        });
+      });
+      const scroll = document.querySelector('.scale-table-scroll');
+      if (scroll && !scroll.dataset.tipScrollBound) {
+        scroll.dataset.tipScrollBound = '1';
+        scroll.addEventListener('scroll', hideScaleTip, { passive: true });
+      }
     }
 
     const ICONS = {
@@ -909,7 +986,7 @@
     function renderWcagCell(w) {
       const parts = [`<span class="badge ${w.body.badge}">${w.body.label}</span>`];
       parts.push(`<span class="badge ${w.largeSp.badge}">${w.largeSp.label}</span>`);
-      return parts.join(' ');
+      return `<div class="scale-cell-badges">${parts.join('')}</div>`;
     }
 
     function levelsRange() {
@@ -1211,8 +1288,8 @@
           return `<span class="badge ${ch.badgeClass}">${ch.label}${formatTargetDiffPx(closest.size, ch.px)}</span>`;
         })
         .filter(Boolean)
-        .join(' ');
-      return badges || '—';
+        .join('');
+      return badges ? `<div class="scale-cell-badges">${badges}</div>` : '—';
     }
 
     // --- CSS export ---
@@ -1638,7 +1715,7 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         const prevLevel = i > 0 ? levels[i - 1] : null;
         const jump = jumpAtPreview(level, prevLevel, c, vw);
         const spCell = isFloored(level, c)
-          ? `${fmtPx(sp)} <span class="badge badge-warn" title="${t('floorTitle', { raw: fmtPx(rawSp) })}">${t('badgeFloor')}</span>`
+          ? `<div class="scale-cell-sp"><span>${fmtPx(sp)}</span><span class="badge badge-warn" title="${t('floorTitle', { raw: fmtPx(rawSp) })}">${t('badgeFloor')}</span></div>`
           : fmtPx(sp);
 
         let rowClass = '';
@@ -1671,15 +1748,19 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         thTip(t('colCss'), t('tipColCss')),
       ];
 
-      return `<div class="card">
+      return `<div class="card" id="scaleTableCard">
         <div class="card-head-row">
           <h2>${t('scaleTable')}</h2>
           <span id="scaleToast" class="toast scale-toast"></span>
         </div>
-        <table id="scaleTable">
-          <thead><tr>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div class="scale-table-scroll">
+          <div class="scale-table-frame">
+            <table id="scaleTable">
+              <thead><tr>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
       </div>`;
     }
 
@@ -1762,6 +1843,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         if (level == null) return;
         el.style.fontSize = sizeAtViewport(level, state.previewViewport, c) + 'px';
       });
+
+      bindScaleTableTips();
     }
 
     function renderCSS(c) {
@@ -1891,6 +1974,8 @@ ${levels.map(l => `.${cssClassName(l)} { --font-level: ${l}; }`).join('\n')}`;
         btn.textContent = t('downloaded');
         setTimeout(() => { btn.textContent = prev; }, 1500);
       });
+
+      bindScaleTableTips();
     }
 
     loadFromStorage();
