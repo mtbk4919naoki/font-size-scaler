@@ -1,0 +1,14 @@
+{
+  "name": "font-size-scaler",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node scripts/verify-formula.mjs && node scripts/verify-security.mjs",
+    "chaindrop:scan": "node scripts/chaindrop-scan.mjs",
+    "chaindrop:scan:fetch": "node scripts/chaindrop-scan.mjs --fetch"
+  },
+  "trustedDependencies": [],
+  "x-notes": {
+    "install": "npm ci のみ。.npmrc の ignore-scripts=true が有効なこと。"
+  }
+}
